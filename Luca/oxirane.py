@@ -149,6 +149,7 @@ all_clusters_tasks[clusters_task.exc_suffix] = deepcopy(clusters_task)
 clusters_task.md_prefix = 'rattled'
 clusters_task.exc_suffix = 'rattled'
 clusters_task.ref_mol_dir = None
+clusters_task.target = [0,1]
 for w in get_trajectory_list(1): 
     clusters_task.md_suffix = f'rattled_gs_{w}_nocalc'
     clusters_task.which_traj = w
@@ -279,13 +280,13 @@ if False:
 iter_dir_suffixes = ["mlclus"]
 seeds=["{solu}"]
 all_mltrain_tasks = {}
-all_mltrain_tasks.update(create_mltrain_tasks(train_task,train_calcs,seeds,targets,rand_seed,meth,truth,traj_suffixes,dir_suffixes,ntraj,iter_dir_suffixes,delta_epochs=200,separate_valid=False))
+#all_mltrain_tasks.update(create_mltrain_tasks(train_task,train_calcs,seeds,targets,rand_seed,meth,truth,traj_suffixes,dir_suffixes,ntraj,iter_dir_suffixes,delta_epochs=200,separate_valid=False))
 
 # Non-active learning calculators (rattled configs only)
 train_task.wrapper.train_args['max_num_epochs'] = 1000
 train_task.wrapper.train_args['swa'] = True
 train_task.wrapper.train_args['start_swa'] = 800
-rattled_calcs = [f'rattled_50x{i}' for i in range(1,11)]
+rattled_calcs = [f'rattled_50x{i}' for i in range(1,2)]
 seeds = ["{solu}"]
 for target in targets:
     targstr = targets[target]
@@ -295,15 +296,20 @@ for target in targets:
         train_task.traj_suffix = truth
         train_task.calc_dir_suffix = 'rattled'
         train_task.target = target
+        train_task.which_trajs = []
         # Set up links to trajectories
         train_task.traj_links = {}
         # Add n trajectories
         ntraj[targstr,"rattled"] = int(t[11:])
+        print(targstr,t,ntraj[targstr,"rattled"])
         add_trajectories(train_task,seeds,t,traj_suffixes,dir_suffixes,ntraj,targets,target,truth)
+        ntraj[targstr,"rattled"] = 0
+        print(targstr,t,train_task.which_trajs)
         for rs in rand_seed:
             train_task.wrapper.train_args['seed'] = rand_seed[rs] # MACE specific
             train_task.calc_suffix = f'{t}{rs}'
             all_mltrain_tasks[f'{targstr}_{t}{rs}'] = deepcopy(train_task)
+print('done')
 
 # Settings for ML Molecular Dynamics
 md_wrapper = mace_wrapper
@@ -348,7 +354,7 @@ test_task.wrapper = mace_wrapper
 test_task.script_settings = parallel.get_default_script_settings(test_task.wrapper)
 test_task.ntraj = 300
 test_task.ref_mol_dir = f'{{targ}}_{xc_funcs[which_func]}'
-test_task.calc_seed = f"{list(all_solutes)[0]}_{{solv}}"
+test_task.calc_seed = f"{list(all_solutes)[0]}"
 all_test_tasks = {}
 # Add the rattled_B-J trajectories as extra test sets
 ntraj[targets[0],"rattled"] = 1
