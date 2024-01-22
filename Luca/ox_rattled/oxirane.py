@@ -42,7 +42,7 @@ all_solvents = {None: None}
 
 # List of all solutes to use
 all_solutes = {"ox": "oxirane"}
-max_iter = 10
+max_iter = 1
 
 # Make a dictionary containing calculators for each Active Learning iteration
 train_calcs = []
@@ -149,7 +149,8 @@ all_clusters_tasks[clusters_task.exc_suffix] = deepcopy(clusters_task)
 clusters_task.md_prefix = 'rattled'
 clusters_task.exc_suffix = 'rattled'
 clusters_task.ref_mol_dir = None
-for w in get_trajectory_list(10): 
+clusters_task.target = [0,1]
+for w in get_trajectory_list(7): 
     clusters_task.md_suffix = f'rattled_gs_{w}_nocalc'
     clusters_task.which_traj = w
     all_clusters_tasks[f'{clusters_task.exc_suffix}_{w}'] = deepcopy(clusters_task)
@@ -277,7 +278,7 @@ if False:
 
 # Directory suffix for iterative learning clusters
 iter_dir_suffixes = ["mlclus"]
-seeds=["{solu}",]
+seeds=["{solu}"]
 all_mltrain_tasks = {}
 all_mltrain_tasks.update(create_mltrain_tasks(train_task,train_calcs,seeds,targets,rand_seed,meth,truth,traj_suffixes,dir_suffixes,ntraj,iter_dir_suffixes,delta_epochs=200,separate_valid=True))
 
@@ -295,11 +296,14 @@ for target in targets:
         train_task.traj_suffix = truth
         train_task.calc_dir_suffix = 'rattled'
         train_task.target = target
+        train_task.which_trajs = []
         # Set up links to trajectories
         train_task.traj_links = {}
         # Add n trajectories
         ntraj[targstr,"rattled"] = int(t[11:])
-        add_trajectories(train_task,seeds,t,traj_suffixes,dir_suffixes,ntraj,targets,target,truth)
+        
+        ntraj[targstr,"rattled"] = 0
+
         for rs in rand_seed:
             train_task.wrapper.train_args['seed'] = rand_seed[rs] # MACE specific
             train_task.calc_suffix = f'{t}{rs}'
@@ -316,8 +320,8 @@ mltraj_task.md_friction = {'MD': 0.002, 'EQ': 0.05}  # For Langevin dynamics
 #mltraj_task.md_friction = {'MD': 15*fs, 'EQ': 3*fs} # For NPT dynamics
 # Number of MD steps per snapshot
 mltraj_task.md_steps    = 10
-# Number of different trajectories (ABCDE...) and list of trajectories
-mltraj_task.ntraj       = 5
+# Number of different trajectories (ABCDE...) and list of trajectories -changed from 5 to 7
+mltraj_task.ntraj       = 7
 mltraj_task.which_trajs = get_trajectory_list(mltraj_task.ntraj)
 # Number of snapshots per trajectory (each one md_steps in length)
 # Here we do 10000 steps, saving every 10th one

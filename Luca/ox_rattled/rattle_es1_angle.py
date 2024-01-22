@@ -4,23 +4,25 @@ import numpy as np
 opt = read("../es1_PBE0/opt/ox_es1.xyz")
 seeds={"A":42,"B":1234,"C":2345,"D":3456,"E":4567,
        "F":56,"G":5678,"H":6789,"I":7890,"J":8901}
+trajs = ["A","B","C","D","E","F","G"]
 
-for j in range(60, 142, 2):
-    opt.set_angle(1,0,2,angle=j)
-    for w in ["A","B","C","D","E"]:
-        outtrajname = f"ox_rattled_es1_{w}_{j}_nocalc.traj"
-        traj = Trajectory(outtrajname,"w")
-        rng = np.random.RandomState(seeds[w])
-        for i in range(0,50):
-            rat = opt.copy()
-            rat.rattle(0.05,rng=rng)
-            print(rat.positions[0])
-            traj.write(rat)
-        traj.close()
+for j,theta in enumerate(range(60, 130, 10)):
+    opt.set_angle(2,1,0,angle=theta)
+    w = trajs[j]
+    outtrajname = f"ox_rattled_es1_{w}_nocalc.traj"
+    traj = Trajectory(outtrajname,"w")
+    rng = np.random.RandomState(seeds[w])
+    nconfigs = 50 if j==0 else 10
+    for i in range(0,nconfigs):
+        rat = opt.copy()
+        rat.rattle(0.05,rng=rng)
+        print(rat.positions[0])
+        traj.write(rat)
+    traj.close()
 
-        outfilename=f"ox_rattled_es1_{w}_{j}_nocalc.xyz"
-        from ase.io.extxyz import write_xyz
-        f=open(outfilename,"w")
-        write_xyz(f,Trajectory(outtrajname))
-        f.close()
+    outfilename=f"ox_rattled_es1_{w}_nocalc.xyz"
+    from ase.io.extxyz import write_xyz
+    f=open(outfilename,"w")
+    write_xyz(f,Trajectory(outtrajname))
+    f.close()
 

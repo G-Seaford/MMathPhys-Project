@@ -30,7 +30,7 @@ locations_es1 = atoms_es1.get_positions()
 oxygen_gs = locations_gs[0]
 carbon_1_gs = locations_gs[1]
 carbon_2_gs = locations_gs[2]
-coc_angle_gs = atoms_gs.get_angle(1,0,2)
+coc_angle_gs = atoms_gs.get_angle(2,1,0)
 print("Ground State Atom Configurations")
 print("Oxygen:",oxygen_gs, sep=" ") 
 print("Carbon 1:",carbon_1_gs, sep=" ") 
@@ -42,7 +42,7 @@ print(" ")
 oxygen_es1 = locations_es1[0]
 carbon_1_es1 = locations_es1[1]
 carbon_2_es1 = locations_es1[2]
-coc_angle_es1 = atoms_es1.get_angle(1,0,2)
+coc_angle_es1 = atoms_es1.get_angle(2,1,0)
 print("First Excited State Atom Configurations")
 print("Oxygen:",oxygen_es1, sep=" ") 
 print("Carbon 1:",carbon_1_es1, sep=" ") 
@@ -54,23 +54,25 @@ print(" ")
 #Loops over angles for configurations #
 gs_config = []
 es1_config = []
-for i in range(60, 145, 5):
+for i in range(60, 142, 2):
     # Perturbs the Ground State positions #
-    gs = atoms_gs.set_angle(1,0,2,angle=i)
+    gs = atoms_gs.set_angle(2,1,0,angle=i)
     gs=atoms_gs.get_positions()
     
     # Perturbs the First Excited State Parameters #
-    es1 = atoms_es1.set_angle(1,0,2,angle=i)
+    es1 = atoms_es1.set_angle(2,1,0,angle=i)
     es1 = atoms_es1.get_positions()
     
     # Outputs the perturbed arrays into a list for later use #
     gs_config.append(gs) 
     es1_config.append(es1)
+    print(i, gs_config[i], es1_config[i], sep=",")
 
 #atoms= gs_config[1]
 
 #print("Ground State:",gs_config,sep=" ")
 #print("First Excited State:",es1_config,sep=" ")
+
 
 #calc_params_orca = {'basis': 'def2-TZVP', 'target': 0, 'func': 'PBE0', 'disp': True, 'solvent':None}
 

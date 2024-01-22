@@ -22,14 +22,15 @@ calc_params_orca_es1 = {'basis': 'def2-TZVP', 'target': 1, 'func': 'PBE0', 'disp
 angle=[]
 
 
-for i in range(60, 142, 2):
+for i in range(60, 122, 2):
     #print(i)
     angle.append(i)
 
-    atoms.set_angle(1,0,2,angle=i)
+    atoms.set_angle(2,1,0,angle=i)
     
-    gs = owrap_gs.singlepoint(atoms,'gs',calc_params=calc_params_orca_gs)
-    es1 = owrap_es1.singlepoint(atoms,'es1',calc_params=calc_params_orca_es1)
+    gs = owrap_gs.singlepoint(atoms,'gs_CCO',calc_params=calc_params_orca_gs)
+    es1 = owrap_es1.singlepoint(atoms,'es1_CCO',calc_params=calc_params_orca_es1)
 
-    print("The Ground State energy for angle", i,"is:", gs[0], sep=' ')
-    print("The First Excited State energy for angle", i,"is:", es1[0], sep=' ')
+    #print("The First Excited State energy for angle", i,"is:", gs[0], sep=' ')
+    #print("The First Excited State energy for angle", i,"is:", es1[0], sep=' ')
+    print( i, gs[0], es1[0], sep=',')

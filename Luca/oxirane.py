@@ -150,7 +150,7 @@ clusters_task.md_prefix = 'rattled'
 clusters_task.exc_suffix = 'rattled'
 clusters_task.ref_mol_dir = None
 clusters_task.target = [0,1]
-for w in get_trajectory_list(1): 
+for w in get_trajectory_list(7): 
     clusters_task.md_suffix = f'rattled_gs_{w}_nocalc'
     clusters_task.which_traj = w
     all_clusters_tasks[f'{clusters_task.exc_suffix}_{w}'] = deepcopy(clusters_task)
@@ -286,10 +286,12 @@ all_mltrain_tasks = {}
 train_task.wrapper.train_args['max_num_epochs'] = 1000
 train_task.wrapper.train_args['swa'] = True
 train_task.wrapper.train_args['start_swa'] = 800
-rattled_calcs = [f'rattled_50x{i}' for i in range(1,2)]
+rattled_calcs = [f'rattled_50x{i}' for i in range(1,11)]
 seeds = ["{solu}"]
 for target in targets:
     targstr = targets[target]
+    for targp in targets:
+        ntraj[targets[targp],"rattled"] = 0
     for t in rattled_calcs:
         train_task.reset_loss = False
         targstr = targets[target]
@@ -322,8 +324,8 @@ mltraj_task.md_friction = {'MD': 0.002, 'EQ': 0.05}  # For Langevin dynamics
 #mltraj_task.md_friction = {'MD': 15*fs, 'EQ': 3*fs} # For NPT dynamics
 # Number of MD steps per snapshot
 mltraj_task.md_steps    = 10
-# Number of different trajectories (ABCDE...) and list of trajectories
-mltraj_task.ntraj       = 5
+# Number of different trajectories (ABCDE...) and list of trajectories - changed from 5 to 7
+mltraj_task.ntraj       = 7
 mltraj_task.which_trajs = get_trajectory_list(mltraj_task.ntraj)
 # Number of snapshots per trajectory (each one md_steps in length)
 # Here we do 10000 steps, saving every 10th one

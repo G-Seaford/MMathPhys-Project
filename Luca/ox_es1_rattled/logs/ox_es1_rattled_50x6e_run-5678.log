@@ -1,0 +1,748 @@
+2023-12-31 00:33:24.277 INFO: MACE version: 0.2.0
+2023-12-31 00:33:24.277 INFO: Configuration: Namespace(name='ox_es1_rattled_50x6e', seed=5678, log_dir='logs', model_dir='.', checkpoints_dir='checkpoints', results_dir='results', downloads_dir='downloads', device='cuda', default_dtype='float64', log_level='INFO', error_table='EnergyDipoleRMSE', model='EnergyDipolesMACE', r_max=5.0, num_radial_basis=8, num_cutoff_basis=5, interaction='RealAgnosticResidualInteractionBlock', interaction_first='RealAgnosticResidualInteractionBlock', max_ell=3, correlation=3, num_interactions=2, MLP_irreps='16x0e', radial_MLP='[64, 64, 64]', hidden_irreps='32x0e + 32x1o + 32x2e', num_channels=None, max_L=None, gate='silu', scaling='rms_forces_scaling', avg_num_neighbors=1.0, compute_avg_num_neighbors=True, compute_stress=True, compute_forces=True, train_file='ox_es1_rattled_50x6e_train.xyz', valid_file=None, valid_fraction=0.05, test_file='ox_es1_rattled_50x6e_train.xyz', E0s='{6: -1034.7672562939947, 1: -13.74018495096079, 8: -2057.26969300199}', energy_key='energy', forces_key='forces', virials_key='virials', stress_key='stress', dipole_key='dipole', charges_key='charges', loss='energy_forces_dipole', forces_weight=100.0, swa_forces_weight=100.0, energy_weight=1.0, swa_energy_weight=1000.0, virials_weight=1.0, swa_virials_weight=10.0, stress_weight=1.0, swa_stress_weight=10.0, dipole_weight=1.0, swa_dipole_weight=1.0, config_type_weights='{"Default":1.0}', huber_delta=0.01, optimizer='adam', batch_size=16, valid_batch_size=16, lr=0.01, swa_lr=0.001, weight_decay=5e-07, amsgrad=True, scheduler='ReduceLROnPlateau', lr_factor=0.8, scheduler_patience=50, lr_scheduler_gamma=0.9993, swa=True, start_swa=800, ema=False, ema_decay=0.99, max_num_epochs=1000, patience=2048, eval_interval=2, keep_checkpoints=False, restart_latest=True, save_cpu=False, clip_grad=10.0, wandb=False, wandb_project='', wandb_entity='', wandb_name='', wandb_log_hypers=['num_channels', 'max_L', 'correlation', 'lr', 'swa_lr', 'weight_decay', 'batch_size', 'max_num_epochs', 'start_swa', 'energy_weight', 'forces_weight'])
+2023-12-31 00:33:24.317 INFO: CUDA version: 11.7, CUDA device: 0
+2023-12-31 00:33:24.348 INFO: Loaded 100 training configurations from 'ox_es1_rattled_50x6e_train.xyz'
+2023-12-31 00:33:24.348 INFO: Using random 5.0% of training set for validation
+2023-12-31 00:33:24.373 INFO: Loaded 100 test configurations from 'ox_es1_rattled_50x6e_train.xyz'
+2023-12-31 00:33:24.374 INFO: Total number of configurations: train=95, valid=5, tests=[Default: 100]
+2023-12-31 00:33:24.374 INFO: AtomicNumberTable: (1, 6, 8)
+2023-12-31 00:33:24.374 INFO: Atomic Energies not in training file, using command line argument E0s
+2023-12-31 00:33:24.374 INFO: Atomic energies: [-13.74018495096079, -1034.7672562939947, -2057.26969300199]
+2023-12-31 00:33:24.448 INFO: WeightedEnergyForcesDipoleLoss(energy_weight=1.000, forces_weight=100.000, dipole_weight=1.000)
+2023-12-31 00:33:24.456 INFO: Average number of neighbors: 6.0
+2023-12-31 00:33:24.456 INFO: Selected the following outputs: {'energy': True, 'forces': True, 'virials': False, 'stress': False, 'dipoles': True}
+2023-12-31 00:33:24.456 INFO: Building model
+2023-12-31 00:33:24.456 INFO: Hidden irreps: 32x0e + 32x1o + 32x2e
+2023-12-31 00:33:25.871 INFO: Using stochastic weight averaging (after 800 epochs) with energy weight : 1000.0, forces weight : 100.0, dipole weight : 1.0 and learning rate : 0.001
+2023-12-31 00:33:25.932 WARNING: Cannot find checkpoint with tag 'ox_es1_rattled_50x6e_run-5678' in 'checkpoints'
+2023-12-31 00:33:25.932 INFO: EnergyDipolesMACE(
+  (node_embedding): LinearNodeEmbeddingBlock(
+    (linear): Linear(3x0e -> 32x0e | 96 weights)
+  )
+  (radial_embedding): RadialEmbeddingBlock(
+    (bessel_fn): BesselBasis(r_max=5.0, num_basis=8, trainable=False)
+    (cutoff_fn): PolynomialCutoff(p=5.0, r_max=5.0)
+  )
+  (spherical_harmonics): SphericalHarmonics()
+  (atomic_energies_fn): AtomicEnergiesBlock(energies=[-13.7402, -1034.7673, -2057.2697])
+  (interactions): ModuleList(
+    (0): RealAgnosticInteractionBlock(
+      (linear_up): Linear(32x0e -> 32x0e | 1024 weights)
+      (conv_tp): TensorProduct(32x0e x 1x0e+1x1o+1x2e+1x3o -> 32x0e+32x1o+32x2e+32x3o | 128 paths | 128 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 128]
+      (linear): Linear(32x0e+32x1o+32x2e+32x3o -> 32x0e+32x1o+32x2e+32x3o | 4096 weights)
+      (skip_tp): FullyConnectedTensorProduct(32x0e+32x1o+32x2e+32x3o x 3x0e -> 32x0e+32x1o+32x2e+32x3o | 12288 paths | 12288 weights)
+      (reshape): reshape_irreps()
+    )
+    (1): RealAgnosticResidualInteractionBlock(
+      (linear_up): Linear(32x0e+32x1o+32x2e -> 32x0e+32x1o+32x2e | 3072 weights)
+      (conv_tp): TensorProduct(32x0e+32x1o+32x2e x 1x0e+1x1o+1x2e+1x3o -> 96x0e+160x1o+160x2e+128x3o | 544 paths | 544 weights)
+      (conv_tp_weights): FullyConnectedNet[8, 64, 64, 64, 544]
+      (linear): Linear(96x0e+160x1o+160x2e+128x3o -> 32x0e+32x1o+32x2e+32x3o | 17408 weights)
+      (skip_tp): FullyConnectedTensorProduct(32x0e+32x1o+32x2e x 3x0e -> 32x0e+32x1o | 6144 paths | 6144 weights)
+      (reshape): reshape_irreps()
+    )
+  )
+  (products): ModuleList(
+    (0): EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x4x32 (GPU 0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x32 (GPU 0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+          (1): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x6x32 (GPU 0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x32 (GPU 0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+          (2): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x7x32 (GPU 0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x32 (GPU 0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(32x0e+32x1o+32x2e -> 32x0e+32x1o+32x2e | 3072 weights)
+    )
+    (1): EquivariantProductBasisBlock(
+      (symmetric_contractions): SymmetricContraction(
+        (contractions): ModuleList(
+          (0): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x4x32 (GPU 0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x32 (GPU 0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+          (1): Contraction(
+            (contractions_weighting): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (contractions_features): ModuleList(
+              (0-1): 2 x GraphModule()
+            )
+            (weights): ParameterList(
+                (0): Parameter containing: [torch.float64 of size 3x6x32 (GPU 0)]
+                (1): Parameter containing: [torch.float64 of size 3x1x32 (GPU 0)]
+            )
+            (graph_opt_main): GraphModule()
+          )
+        )
+      )
+      (linear): Linear(32x0e+32x1o -> 32x0e+32x1o | 2048 weights)
+    )
+  )
+  (readouts): ModuleList(
+    (0): LinearDipoleReadoutBlock(
+      (linear): Linear(32x0e+32x1o+32x2e -> 1x0e+1x1o | 64 weights)
+    )
+    (1): NonLinearDipoleReadoutBlock(
+      (equivariant_nonlin): Gate (16x0e -> 16x0e)
+      (linear_1): Linear(32x0e+32x1o -> 16x0e | 512 weights)
+      (linear_2): Linear(16x0e -> 1x0e+1x1o | 16 weights)
+    )
+  )
+)
+2023-12-31 00:33:25.934 INFO: Number of parameters: 133776
+2023-12-31 00:33:25.934 INFO: Optimizer: Adam (
+Parameter Group 0
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: embedding
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 1
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_decay
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 2
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: interactions_no_decay
+    swa_lr: 0.001
+    weight_decay: 0.0
+
+Parameter Group 3
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: products
+    swa_lr: 0.001
+    weight_decay: 5e-07
+
+Parameter Group 4
+    amsgrad: True
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: None
+    initial_lr: 0.01
+    lr: 0.01
+    maximize: False
+    name: readouts
+    swa_lr: 0.001
+    weight_decay: 0.0
+)
+2023-12-31 00:33:25.934 INFO: Using gradient clipping with tolerance=10.000
+2023-12-31 00:33:25.934 INFO: Started training
+2023-12-31 00:33:33.740 INFO: Epoch 0: loss=440.3544, RMSE_E_per_atom=1208.5 meV, RMSE_F=2094.6 meV / A, RMSE_Mu_per_atom=37.37 mDebye
+2023-12-31 00:33:36.006 INFO: Epoch 2: loss=289.2396, RMSE_E_per_atom=1598.3 meV, RMSE_F=1692.8 meV / A, RMSE_Mu_per_atom=37.24 mDebye
+2023-12-31 00:33:37.193 INFO: Epoch 4: loss=249.5212, RMSE_E_per_atom=1609.4 meV, RMSE_F=1571.0 meV / A, RMSE_Mu_per_atom=37.16 mDebye
+2023-12-31 00:33:38.379 INFO: Epoch 6: loss=143.6865, RMSE_E_per_atom=1448.5 meV, RMSE_F=1189.3 meV / A, RMSE_Mu_per_atom=37.06 mDebye
+2023-12-31 00:33:39.569 INFO: Epoch 8: loss=122.6273, RMSE_E_per_atom=1519.6 meV, RMSE_F=1096.3 meV / A, RMSE_Mu_per_atom=37.25 mDebye
+2023-12-31 00:33:40.758 INFO: Epoch 10: loss=79.1672, RMSE_E_per_atom=1455.7 meV, RMSE_F=877.0 meV / A, RMSE_Mu_per_atom=35.86 mDebye
+2023-12-31 00:33:41.949 INFO: Epoch 12: loss=62.8273, RMSE_E_per_atom=1425.9 meV, RMSE_F=779.0 meV / A, RMSE_Mu_per_atom=34.21 mDebye
+2023-12-31 00:33:43.136 INFO: Epoch 14: loss=53.5995, RMSE_E_per_atom=1369.6 meV, RMSE_F=718.5 meV / A, RMSE_Mu_per_atom=31.54 mDebye
+2023-12-31 00:33:44.323 INFO: Epoch 16: loss=49.2707, RMSE_E_per_atom=1341.4 meV, RMSE_F=688.4 meV / A, RMSE_Mu_per_atom=28.82 mDebye
+2023-12-31 00:33:45.510 INFO: Epoch 18: loss=47.3868, RMSE_E_per_atom=1334.8 meV, RMSE_F=674.7 meV / A, RMSE_Mu_per_atom=28.77 mDebye
+2023-12-31 00:33:46.697 INFO: Epoch 20: loss=51.6258, RMSE_E_per_atom=1313.5 meV, RMSE_F=705.8 meV / A, RMSE_Mu_per_atom=28.04 mDebye
+2023-12-31 00:33:47.621 INFO: Epoch 22: loss=43.6532, RMSE_E_per_atom=1199.3 meV, RMSE_F=649.2 meV / A, RMSE_Mu_per_atom=26.76 mDebye
+2023-12-31 00:33:48.808 INFO: Epoch 24: loss=61.1023, RMSE_E_per_atom=1143.9 meV, RMSE_F=772.8 meV / A, RMSE_Mu_per_atom=26.03 mDebye
+2023-12-31 00:33:49.732 INFO: Epoch 26: loss=51.5433, RMSE_E_per_atom=1040.8 meV, RMSE_F=709.9 meV / A, RMSE_Mu_per_atom=25.39 mDebye
+2023-12-31 00:33:50.658 INFO: Epoch 28: loss=49.8441, RMSE_E_per_atom=1017.8 meV, RMSE_F=698.2 meV / A, RMSE_Mu_per_atom=24.52 mDebye
+2023-12-31 00:33:51.582 INFO: Epoch 30: loss=56.8254, RMSE_E_per_atom=1006.7 meV, RMSE_F=746.7 meV / A, RMSE_Mu_per_atom=23.45 mDebye
+2023-12-31 00:33:52.507 INFO: Epoch 32: loss=56.7511, RMSE_E_per_atom=975.4 meV, RMSE_F=746.6 meV / A, RMSE_Mu_per_atom=23.82 mDebye
+2023-12-31 00:33:53.431 INFO: Epoch 34: loss=45.9971, RMSE_E_per_atom=970.6 meV, RMSE_F=670.8 meV / A, RMSE_Mu_per_atom=24.77 mDebye
+2023-12-31 00:33:54.357 INFO: Epoch 36: loss=53.5351, RMSE_E_per_atom=954.4 meV, RMSE_F=725.0 meV / A, RMSE_Mu_per_atom=23.67 mDebye
+2023-12-31 00:33:55.284 INFO: Epoch 38: loss=41.8781, RMSE_E_per_atom=895.5 meV, RMSE_F=640.5 meV / A, RMSE_Mu_per_atom=23.43 mDebye
+2023-12-31 00:33:56.476 INFO: Epoch 40: loss=40.7350, RMSE_E_per_atom=862.3 meV, RMSE_F=631.9 meV / A, RMSE_Mu_per_atom=23.56 mDebye
+2023-12-31 00:33:57.667 INFO: Epoch 42: loss=48.8964, RMSE_E_per_atom=845.9 meV, RMSE_F=693.7 meV / A, RMSE_Mu_per_atom=23.45 mDebye
+2023-12-31 00:33:58.589 INFO: Epoch 44: loss=52.7056, RMSE_E_per_atom=848.0 meV, RMSE_F=720.5 meV / A, RMSE_Mu_per_atom=26.35 mDebye
+2023-12-31 00:33:59.509 INFO: Epoch 46: loss=46.3964, RMSE_E_per_atom=821.4 meV, RMSE_F=675.7 meV / A, RMSE_Mu_per_atom=25.17 mDebye
+2023-12-31 00:34:00.438 INFO: Epoch 48: loss=42.1455, RMSE_E_per_atom=779.2 meV, RMSE_F=644.1 meV / A, RMSE_Mu_per_atom=23.20 mDebye
+2023-12-31 00:34:01.362 INFO: Epoch 50: loss=44.2501, RMSE_E_per_atom=794.9 meV, RMSE_F=660.0 meV / A, RMSE_Mu_per_atom=25.46 mDebye
+2023-12-31 00:34:02.285 INFO: Epoch 52: loss=44.5886, RMSE_E_per_atom=771.6 meV, RMSE_F=662.8 meV / A, RMSE_Mu_per_atom=24.07 mDebye
+2023-12-31 00:34:03.210 INFO: Epoch 54: loss=44.9123, RMSE_E_per_atom=681.6 meV, RMSE_F=666.3 meV / A, RMSE_Mu_per_atom=24.04 mDebye
+2023-12-31 00:34:04.132 INFO: Epoch 56: loss=46.0973, RMSE_E_per_atom=705.3 meV, RMSE_F=674.8 meV / A, RMSE_Mu_per_atom=24.24 mDebye
+2023-12-31 00:34:05.060 INFO: Epoch 58: loss=38.9961, RMSE_E_per_atom=717.4 meV, RMSE_F=619.8 meV / A, RMSE_Mu_per_atom=25.45 mDebye
+2023-12-31 00:34:06.246 INFO: Epoch 60: loss=45.1110, RMSE_E_per_atom=663.3 meV, RMSE_F=668.0 meV / A, RMSE_Mu_per_atom=23.20 mDebye
+2023-12-31 00:34:07.170 INFO: Epoch 62: loss=55.7542, RMSE_E_per_atom=641.7 meV, RMSE_F=743.5 meV / A, RMSE_Mu_per_atom=23.87 mDebye
+2023-12-31 00:34:08.095 INFO: Epoch 64: loss=40.3389, RMSE_E_per_atom=623.6 meV, RMSE_F=631.6 meV / A, RMSE_Mu_per_atom=24.46 mDebye
+2023-12-31 00:34:09.020 INFO: Epoch 66: loss=68.7232, RMSE_E_per_atom=576.2 meV, RMSE_F=826.6 meV / A, RMSE_Mu_per_atom=26.57 mDebye
+2023-12-31 00:34:09.947 INFO: Epoch 68: loss=40.8128, RMSE_E_per_atom=545.5 meV, RMSE_F=636.1 meV / A, RMSE_Mu_per_atom=23.70 mDebye
+2023-12-31 00:34:10.875 INFO: Epoch 70: loss=61.6893, RMSE_E_per_atom=588.7 meV, RMSE_F=782.8 meV / A, RMSE_Mu_per_atom=25.42 mDebye
+2023-12-31 00:34:11.799 INFO: Epoch 72: loss=47.3922, RMSE_E_per_atom=615.1 meV, RMSE_F=685.2 meV / A, RMSE_Mu_per_atom=24.40 mDebye
+2023-12-31 00:34:12.721 INFO: Epoch 74: loss=34.7652, RMSE_E_per_atom=576.1 meV, RMSE_F=586.3 meV / A, RMSE_Mu_per_atom=24.36 mDebye
+2023-12-31 00:34:13.914 INFO: Epoch 76: loss=37.7750, RMSE_E_per_atom=630.1 meV, RMSE_F=610.9 meV / A, RMSE_Mu_per_atom=24.36 mDebye
+2023-12-31 00:34:14.843 INFO: Epoch 78: loss=41.4635, RMSE_E_per_atom=615.3 meV, RMSE_F=640.5 meV / A, RMSE_Mu_per_atom=24.58 mDebye
+2023-12-31 00:34:15.769 INFO: Epoch 80: loss=52.4608, RMSE_E_per_atom=567.9 meV, RMSE_F=721.6 meV / A, RMSE_Mu_per_atom=25.13 mDebye
+2023-12-31 00:34:16.690 INFO: Epoch 82: loss=41.2144, RMSE_E_per_atom=546.8 meV, RMSE_F=639.2 meV / A, RMSE_Mu_per_atom=24.94 mDebye
+2023-12-31 00:34:17.618 INFO: Epoch 84: loss=31.0474, RMSE_E_per_atom=599.9 meV, RMSE_F=553.4 meV / A, RMSE_Mu_per_atom=25.80 mDebye
+2023-12-31 00:34:18.809 INFO: Epoch 86: loss=28.6750, RMSE_E_per_atom=625.7 meV, RMSE_F=531.3 meV / A, RMSE_Mu_per_atom=23.61 mDebye
+2023-12-31 00:34:20.000 INFO: Epoch 88: loss=31.1570, RMSE_E_per_atom=547.4 meV, RMSE_F=555.0 meV / A, RMSE_Mu_per_atom=24.20 mDebye
+2023-12-31 00:34:20.925 INFO: Epoch 90: loss=45.8787, RMSE_E_per_atom=532.4 meV, RMSE_F=674.8 meV / A, RMSE_Mu_per_atom=24.42 mDebye
+2023-12-31 00:34:21.850 INFO: Epoch 92: loss=50.9060, RMSE_E_per_atom=564.8 meV, RMSE_F=710.9 meV / A, RMSE_Mu_per_atom=23.69 mDebye
+2023-12-31 00:34:22.772 INFO: Epoch 94: loss=42.4098, RMSE_E_per_atom=576.4 meV, RMSE_F=648.2 meV / A, RMSE_Mu_per_atom=25.00 mDebye
+2023-12-31 00:34:23.698 INFO: Epoch 96: loss=47.0451, RMSE_E_per_atom=567.7 meV, RMSE_F=683.1 meV / A, RMSE_Mu_per_atom=23.51 mDebye
+2023-12-31 00:34:24.624 INFO: Epoch 98: loss=34.7466, RMSE_E_per_atom=566.8 meV, RMSE_F=586.2 meV / A, RMSE_Mu_per_atom=24.06 mDebye
+2023-12-31 00:34:25.556 INFO: Epoch 100: loss=39.5527, RMSE_E_per_atom=513.5 meV, RMSE_F=626.4 meV / A, RMSE_Mu_per_atom=22.24 mDebye
+2023-12-31 00:34:26.485 INFO: Epoch 102: loss=27.9596, RMSE_E_per_atom=510.9 meV, RMSE_F=525.8 meV / A, RMSE_Mu_per_atom=23.65 mDebye
+2023-12-31 00:34:27.680 INFO: Epoch 104: loss=28.5291, RMSE_E_per_atom=508.4 meV, RMSE_F=531.2 meV / A, RMSE_Mu_per_atom=22.52 mDebye
+2023-12-31 00:34:28.611 INFO: Epoch 106: loss=31.1675, RMSE_E_per_atom=493.2 meV, RMSE_F=555.6 meV / A, RMSE_Mu_per_atom=23.97 mDebye
+2023-12-31 00:34:29.542 INFO: Epoch 108: loss=32.0947, RMSE_E_per_atom=490.2 meV, RMSE_F=563.9 meV / A, RMSE_Mu_per_atom=22.72 mDebye
+2023-12-31 00:34:30.474 INFO: Epoch 110: loss=42.9135, RMSE_E_per_atom=458.7 meV, RMSE_F=653.1 meV / A, RMSE_Mu_per_atom=22.13 mDebye
+2023-12-31 00:34:31.406 INFO: Epoch 112: loss=33.6194, RMSE_E_per_atom=470.6 meV, RMSE_F=577.4 meV / A, RMSE_Mu_per_atom=24.12 mDebye
+2023-12-31 00:34:32.335 INFO: Epoch 114: loss=34.4007, RMSE_E_per_atom=522.1 meV, RMSE_F=583.8 meV / A, RMSE_Mu_per_atom=21.54 mDebye
+2023-12-31 00:34:33.264 INFO: Epoch 116: loss=34.6644, RMSE_E_per_atom=459.3 meV, RMSE_F=586.6 meV / A, RMSE_Mu_per_atom=22.04 mDebye
+2023-12-31 00:34:34.192 INFO: Epoch 118: loss=31.2303, RMSE_E_per_atom=467.9 meV, RMSE_F=556.5 meV / A, RMSE_Mu_per_atom=21.26 mDebye
+2023-12-31 00:34:35.125 INFO: Epoch 120: loss=31.2455, RMSE_E_per_atom=495.9 meV, RMSE_F=556.3 meV / A, RMSE_Mu_per_atom=22.29 mDebye
+2023-12-31 00:34:36.058 INFO: Epoch 122: loss=28.7607, RMSE_E_per_atom=477.9 meV, RMSE_F=533.7 meV / A, RMSE_Mu_per_atom=21.64 mDebye
+2023-12-31 00:34:36.990 INFO: Epoch 124: loss=23.0772, RMSE_E_per_atom=456.5 meV, RMSE_F=477.7 meV / A, RMSE_Mu_per_atom=22.43 mDebye
+2023-12-31 00:34:38.187 INFO: Epoch 126: loss=28.8401, RMSE_E_per_atom=470.6 meV, RMSE_F=534.5 meV / A, RMSE_Mu_per_atom=21.49 mDebye
+2023-12-31 00:34:39.119 INFO: Epoch 128: loss=28.3338, RMSE_E_per_atom=401.5 meV, RMSE_F=530.4 meV / A, RMSE_Mu_per_atom=21.26 mDebye
+2023-12-31 00:34:40.051 INFO: Epoch 130: loss=33.4697, RMSE_E_per_atom=419.8 meV, RMSE_F=576.6 meV / A, RMSE_Mu_per_atom=21.20 mDebye
+2023-12-31 00:34:40.979 INFO: Epoch 132: loss=30.3972, RMSE_E_per_atom=418.9 meV, RMSE_F=549.3 meV / A, RMSE_Mu_per_atom=22.74 mDebye
+2023-12-31 00:34:41.909 INFO: Epoch 134: loss=32.6030, RMSE_E_per_atom=424.4 meV, RMSE_F=569.0 meV / A, RMSE_Mu_per_atom=21.51 mDebye
+2023-12-31 00:34:42.840 INFO: Epoch 136: loss=31.8192, RMSE_E_per_atom=410.8 meV, RMSE_F=562.0 meV / A, RMSE_Mu_per_atom=24.82 mDebye
+2023-12-31 00:34:43.769 INFO: Epoch 138: loss=24.8558, RMSE_E_per_atom=396.9 meV, RMSE_F=496.5 meV / A, RMSE_Mu_per_atom=20.90 mDebye
+2023-12-31 00:34:44.701 INFO: Epoch 140: loss=40.7448, RMSE_E_per_atom=372.0 meV, RMSE_F=636.9 meV / A, RMSE_Mu_per_atom=20.87 mDebye
+2023-12-31 00:34:45.633 INFO: Epoch 142: loss=37.1863, RMSE_E_per_atom=405.5 meV, RMSE_F=608.0 meV / A, RMSE_Mu_per_atom=22.35 mDebye
+2023-12-31 00:34:46.565 INFO: Epoch 144: loss=23.4292, RMSE_E_per_atom=370.6 meV, RMSE_F=482.1 meV / A, RMSE_Mu_per_atom=21.24 mDebye
+2023-12-31 00:34:47.491 INFO: Epoch 146: loss=40.2986, RMSE_E_per_atom=363.7 meV, RMSE_F=633.4 meV / A, RMSE_Mu_per_atom=21.58 mDebye
+2023-12-31 00:34:48.417 INFO: Epoch 148: loss=22.7141, RMSE_E_per_atom=337.2 meV, RMSE_F=474.9 meV / A, RMSE_Mu_per_atom=21.43 mDebye
+2023-12-31 00:34:49.608 INFO: Epoch 150: loss=29.8273, RMSE_E_per_atom=366.5 meV, RMSE_F=544.5 meV / A, RMSE_Mu_per_atom=21.37 mDebye
+2023-12-31 00:34:50.550 INFO: Epoch 152: loss=24.9069, RMSE_E_per_atom=395.3 meV, RMSE_F=497.1 meV / A, RMSE_Mu_per_atom=20.91 mDebye
+2023-12-31 00:34:51.481 INFO: Epoch 154: loss=36.7720, RMSE_E_per_atom=370.8 meV, RMSE_F=604.9 meV / A, RMSE_Mu_per_atom=21.49 mDebye
+2023-12-31 00:34:52.409 INFO: Epoch 156: loss=35.5770, RMSE_E_per_atom=362.8 meV, RMSE_F=594.9 meV / A, RMSE_Mu_per_atom=23.22 mDebye
+2023-12-31 00:34:53.338 INFO: Epoch 158: loss=23.3913, RMSE_E_per_atom=340.2 meV, RMSE_F=482.0 meV / A, RMSE_Mu_per_atom=21.14 mDebye
+2023-12-31 00:34:54.269 INFO: Epoch 160: loss=28.8977, RMSE_E_per_atom=373.6 meV, RMSE_F=535.8 meV / A, RMSE_Mu_per_atom=22.18 mDebye
+2023-12-31 00:34:55.200 INFO: Epoch 162: loss=25.7935, RMSE_E_per_atom=380.1 meV, RMSE_F=506.0 meV / A, RMSE_Mu_per_atom=22.46 mDebye
+2023-12-31 00:34:56.128 INFO: Epoch 164: loss=32.3802, RMSE_E_per_atom=309.4 meV, RMSE_F=567.7 meV / A, RMSE_Mu_per_atom=22.54 mDebye
+2023-12-31 00:34:57.052 INFO: Epoch 166: loss=43.9943, RMSE_E_per_atom=335.1 meV, RMSE_F=662.1 meV / A, RMSE_Mu_per_atom=21.50 mDebye
+2023-12-31 00:34:57.976 INFO: Epoch 168: loss=34.3646, RMSE_E_per_atom=296.0 meV, RMSE_F=585.0 meV / A, RMSE_Mu_per_atom=22.87 mDebye
+2023-12-31 00:34:58.903 INFO: Epoch 170: loss=37.5507, RMSE_E_per_atom=269.4 meV, RMSE_F=611.8 meV / A, RMSE_Mu_per_atom=22.54 mDebye
+2023-12-31 00:34:59.832 INFO: Epoch 172: loss=36.9298, RMSE_E_per_atom=306.0 meV, RMSE_F=606.4 meV / A, RMSE_Mu_per_atom=24.19 mDebye
+2023-12-31 00:35:00.762 INFO: Epoch 174: loss=32.9923, RMSE_E_per_atom=309.5 meV, RMSE_F=573.1 meV / A, RMSE_Mu_per_atom=21.54 mDebye
+2023-12-31 00:35:01.694 INFO: Epoch 176: loss=29.6534, RMSE_E_per_atom=275.0 meV, RMSE_F=543.4 meV / A, RMSE_Mu_per_atom=22.44 mDebye
+2023-12-31 00:35:02.624 INFO: Epoch 178: loss=30.0952, RMSE_E_per_atom=311.3 meV, RMSE_F=547.3 meV / A, RMSE_Mu_per_atom=21.99 mDebye
+2023-12-31 00:35:03.553 INFO: Epoch 180: loss=27.5595, RMSE_E_per_atom=259.2 meV, RMSE_F=523.9 meV / A, RMSE_Mu_per_atom=20.83 mDebye
+2023-12-31 00:35:04.481 INFO: Epoch 182: loss=32.1967, RMSE_E_per_atom=283.7 meV, RMSE_F=566.2 meV / A, RMSE_Mu_per_atom=23.31 mDebye
+2023-12-31 00:35:05.412 INFO: Epoch 184: loss=24.3425, RMSE_E_per_atom=307.9 meV, RMSE_F=492.0 meV / A, RMSE_Mu_per_atom=20.56 mDebye
+2023-12-31 00:35:06.341 INFO: Epoch 186: loss=23.5325, RMSE_E_per_atom=267.7 meV, RMSE_F=483.9 meV / A, RMSE_Mu_per_atom=20.58 mDebye
+2023-12-31 00:35:07.269 INFO: Epoch 188: loss=25.1294, RMSE_E_per_atom=269.5 meV, RMSE_F=500.2 meV / A, RMSE_Mu_per_atom=20.04 mDebye
+2023-12-31 00:35:08.197 INFO: Epoch 190: loss=27.4179, RMSE_E_per_atom=267.6 meV, RMSE_F=522.6 meV / A, RMSE_Mu_per_atom=20.05 mDebye
+2023-12-31 00:35:09.123 INFO: Epoch 192: loss=28.8978, RMSE_E_per_atom=252.6 meV, RMSE_F=536.6 meV / A, RMSE_Mu_per_atom=20.25 mDebye
+2023-12-31 00:35:10.052 INFO: Epoch 194: loss=27.7376, RMSE_E_per_atom=227.6 meV, RMSE_F=525.7 meV / A, RMSE_Mu_per_atom=22.26 mDebye
+2023-12-31 00:35:10.979 INFO: Epoch 196: loss=35.3193, RMSE_E_per_atom=285.0 meV, RMSE_F=593.2 meV / A, RMSE_Mu_per_atom=21.48 mDebye
+2023-12-31 00:35:11.905 INFO: Epoch 198: loss=25.2307, RMSE_E_per_atom=277.8 meV, RMSE_F=501.1 meV / A, RMSE_Mu_per_atom=20.05 mDebye
+2023-12-31 00:35:12.831 INFO: Epoch 200: loss=27.0303, RMSE_E_per_atom=271.6 meV, RMSE_F=518.8 meV / A, RMSE_Mu_per_atom=21.44 mDebye
+2023-12-31 00:35:13.759 INFO: Epoch 202: loss=26.3883, RMSE_E_per_atom=262.6 meV, RMSE_F=512.6 meV / A, RMSE_Mu_per_atom=20.67 mDebye
+2023-12-31 00:35:14.688 INFO: Epoch 204: loss=26.5226, RMSE_E_per_atom=211.2 meV, RMSE_F=514.2 meV / A, RMSE_Mu_per_atom=20.39 mDebye
+2023-12-31 00:35:15.616 INFO: Epoch 206: loss=29.7960, RMSE_E_per_atom=215.9 meV, RMSE_F=545.0 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:35:16.544 INFO: Epoch 208: loss=27.4197, RMSE_E_per_atom=223.5 meV, RMSE_F=522.7 meV / A, RMSE_Mu_per_atom=20.83 mDebye
+2023-12-31 00:35:17.470 INFO: Epoch 210: loss=35.2331, RMSE_E_per_atom=195.7 meV, RMSE_F=592.8 meV / A, RMSE_Mu_per_atom=22.76 mDebye
+2023-12-31 00:35:18.397 INFO: Epoch 212: loss=33.5357, RMSE_E_per_atom=167.1 meV, RMSE_F=578.5 meV / A, RMSE_Mu_per_atom=20.31 mDebye
+2023-12-31 00:35:19.326 INFO: Epoch 214: loss=31.6763, RMSE_E_per_atom=178.1 meV, RMSE_F=562.1 meV / A, RMSE_Mu_per_atom=22.21 mDebye
+2023-12-31 00:35:20.256 INFO: Epoch 216: loss=22.3706, RMSE_E_per_atom=218.0 meV, RMSE_F=472.0 meV / A, RMSE_Mu_per_atom=20.47 mDebye
+2023-12-31 00:35:21.450 INFO: Epoch 218: loss=31.4993, RMSE_E_per_atom=164.3 meV, RMSE_F=560.6 meV / A, RMSE_Mu_per_atom=21.01 mDebye
+2023-12-31 00:35:22.376 INFO: Epoch 220: loss=37.3112, RMSE_E_per_atom=204.5 meV, RMSE_F=610.1 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:35:23.304 INFO: Epoch 222: loss=31.7169, RMSE_E_per_atom=202.9 meV, RMSE_F=562.4 meV / A, RMSE_Mu_per_atom=21.44 mDebye
+2023-12-31 00:35:24.235 INFO: Epoch 224: loss=30.7586, RMSE_E_per_atom=208.2 meV, RMSE_F=553.8 meV / A, RMSE_Mu_per_atom=20.06 mDebye
+2023-12-31 00:35:25.162 INFO: Epoch 226: loss=33.2113, RMSE_E_per_atom=207.8 meV, RMSE_F=575.6 meV / A, RMSE_Mu_per_atom=19.95 mDebye
+2023-12-31 00:35:26.094 INFO: Epoch 228: loss=28.9504, RMSE_E_per_atom=187.9 meV, RMSE_F=537.4 meV / A, RMSE_Mu_per_atom=19.54 mDebye
+2023-12-31 00:35:27.021 INFO: Epoch 230: loss=39.6732, RMSE_E_per_atom=194.9 meV, RMSE_F=629.2 meV / A, RMSE_Mu_per_atom=19.94 mDebye
+2023-12-31 00:35:27.949 INFO: Epoch 232: loss=30.5864, RMSE_E_per_atom=219.5 meV, RMSE_F=552.2 meV / A, RMSE_Mu_per_atom=20.21 mDebye
+2023-12-31 00:35:28.874 INFO: Epoch 234: loss=29.2329, RMSE_E_per_atom=191.6 meV, RMSE_F=540.0 meV / A, RMSE_Mu_per_atom=19.44 mDebye
+2023-12-31 00:35:29.801 INFO: Epoch 236: loss=26.9280, RMSE_E_per_atom=185.0 meV, RMSE_F=518.2 meV / A, RMSE_Mu_per_atom=20.59 mDebye
+2023-12-31 00:35:30.727 INFO: Epoch 238: loss=28.9976, RMSE_E_per_atom=185.2 meV, RMSE_F=537.8 meV / A, RMSE_Mu_per_atom=21.11 mDebye
+2023-12-31 00:35:31.657 INFO: Epoch 240: loss=27.1617, RMSE_E_per_atom=157.9 meV, RMSE_F=520.5 meV / A, RMSE_Mu_per_atom=21.20 mDebye
+2023-12-31 00:35:32.586 INFO: Epoch 242: loss=29.6562, RMSE_E_per_atom=164.6 meV, RMSE_F=543.9 meV / A, RMSE_Mu_per_atom=20.23 mDebye
+2023-12-31 00:35:33.514 INFO: Epoch 244: loss=31.6216, RMSE_E_per_atom=168.5 meV, RMSE_F=561.7 meV / A, RMSE_Mu_per_atom=21.79 mDebye
+2023-12-31 00:35:34.440 INFO: Epoch 246: loss=30.6675, RMSE_E_per_atom=143.3 meV, RMSE_F=553.2 meV / A, RMSE_Mu_per_atom=20.64 mDebye
+2023-12-31 00:35:35.370 INFO: Epoch 248: loss=29.8026, RMSE_E_per_atom=137.6 meV, RMSE_F=545.4 meV / A, RMSE_Mu_per_atom=20.48 mDebye
+2023-12-31 00:35:36.300 INFO: Epoch 250: loss=31.4740, RMSE_E_per_atom=146.0 meV, RMSE_F=560.5 meV / A, RMSE_Mu_per_atom=19.99 mDebye
+2023-12-31 00:35:37.229 INFO: Epoch 252: loss=29.7048, RMSE_E_per_atom=152.7 meV, RMSE_F=544.4 meV / A, RMSE_Mu_per_atom=19.77 mDebye
+2023-12-31 00:35:38.155 INFO: Epoch 254: loss=29.2827, RMSE_E_per_atom=156.9 meV, RMSE_F=540.5 meV / A, RMSE_Mu_per_atom=20.98 mDebye
+2023-12-31 00:35:39.080 INFO: Epoch 256: loss=29.3659, RMSE_E_per_atom=143.9 meV, RMSE_F=541.4 meV / A, RMSE_Mu_per_atom=19.65 mDebye
+2023-12-31 00:35:40.007 INFO: Epoch 258: loss=25.8312, RMSE_E_per_atom=136.1 meV, RMSE_F=507.6 meV / A, RMSE_Mu_per_atom=20.54 mDebye
+2023-12-31 00:35:40.936 INFO: Epoch 260: loss=25.4426, RMSE_E_per_atom=122.1 meV, RMSE_F=503.9 meV / A, RMSE_Mu_per_atom=19.91 mDebye
+2023-12-31 00:35:41.863 INFO: Epoch 262: loss=23.2933, RMSE_E_per_atom=131.6 meV, RMSE_F=482.0 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:35:42.788 INFO: Epoch 264: loss=28.1807, RMSE_E_per_atom=159.1 meV, RMSE_F=530.2 meV / A, RMSE_Mu_per_atom=19.84 mDebye
+2023-12-31 00:35:43.718 INFO: Epoch 266: loss=27.0713, RMSE_E_per_atom=161.2 meV, RMSE_F=519.7 meV / A, RMSE_Mu_per_atom=20.39 mDebye
+2023-12-31 00:35:44.647 INFO: Epoch 268: loss=28.7212, RMSE_E_per_atom=125.1 meV, RMSE_F=535.4 meV / A, RMSE_Mu_per_atom=19.74 mDebye
+2023-12-31 00:35:45.578 INFO: Epoch 270: loss=26.9992, RMSE_E_per_atom=132.3 meV, RMSE_F=519.1 meV / A, RMSE_Mu_per_atom=19.90 mDebye
+2023-12-31 00:35:46.507 INFO: Epoch 272: loss=29.0012, RMSE_E_per_atom=115.9 meV, RMSE_F=538.0 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:35:47.436 INFO: Epoch 274: loss=30.4042, RMSE_E_per_atom=145.6 meV, RMSE_F=550.8 meV / A, RMSE_Mu_per_atom=19.89 mDebye
+2023-12-31 00:35:48.366 INFO: Epoch 276: loss=30.2065, RMSE_E_per_atom=125.5 meV, RMSE_F=549.1 meV / A, RMSE_Mu_per_atom=21.16 mDebye
+2023-12-31 00:35:49.291 INFO: Epoch 278: loss=26.3542, RMSE_E_per_atom=100.1 meV, RMSE_F=512.9 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:35:50.222 INFO: Epoch 280: loss=29.0009, RMSE_E_per_atom=113.7 meV, RMSE_F=538.0 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:35:51.152 INFO: Epoch 282: loss=30.4673, RMSE_E_per_atom=105.8 meV, RMSE_F=551.5 meV / A, RMSE_Mu_per_atom=20.98 mDebye
+2023-12-31 00:35:52.079 INFO: Epoch 284: loss=31.8249, RMSE_E_per_atom=92.2 meV, RMSE_F=563.7 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:35:53.006 INFO: Epoch 286: loss=24.2387, RMSE_E_per_atom=98.0 meV, RMSE_F=491.8 meV / A, RMSE_Mu_per_atom=20.10 mDebye
+2023-12-31 00:35:53.933 INFO: Epoch 288: loss=27.0757, RMSE_E_per_atom=119.1 meV, RMSE_F=519.8 meV / A, RMSE_Mu_per_atom=19.90 mDebye
+2023-12-31 00:35:54.864 INFO: Epoch 290: loss=29.5700, RMSE_E_per_atom=97.7 meV, RMSE_F=543.3 meV / A, RMSE_Mu_per_atom=20.03 mDebye
+2023-12-31 00:35:55.790 INFO: Epoch 292: loss=24.9706, RMSE_E_per_atom=69.4 meV, RMSE_F=499.2 meV / A, RMSE_Mu_per_atom=20.51 mDebye
+2023-12-31 00:35:56.718 INFO: Epoch 294: loss=34.5774, RMSE_E_per_atom=87.5 meV, RMSE_F=587.6 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:35:57.645 INFO: Epoch 296: loss=32.1767, RMSE_E_per_atom=90.2 meV, RMSE_F=566.8 meV / A, RMSE_Mu_per_atom=19.85 mDebye
+2023-12-31 00:35:58.569 INFO: Epoch 298: loss=27.8186, RMSE_E_per_atom=84.8 meV, RMSE_F=527.0 meV / A, RMSE_Mu_per_atom=19.88 mDebye
+2023-12-31 00:35:59.495 INFO: Epoch 300: loss=28.4964, RMSE_E_per_atom=59.3 meV, RMSE_F=533.3 meV / A, RMSE_Mu_per_atom=21.67 mDebye
+2023-12-31 00:36:00.426 INFO: Epoch 302: loss=27.3388, RMSE_E_per_atom=104.4 meV, RMSE_F=522.4 meV / A, RMSE_Mu_per_atom=20.11 mDebye
+2023-12-31 00:36:01.358 INFO: Epoch 304: loss=27.7078, RMSE_E_per_atom=57.6 meV, RMSE_F=526.0 meV / A, RMSE_Mu_per_atom=20.20 mDebye
+2023-12-31 00:36:02.286 INFO: Epoch 306: loss=33.2547, RMSE_E_per_atom=91.9 meV, RMSE_F=576.2 meV / A, RMSE_Mu_per_atom=21.84 mDebye
+2023-12-31 00:36:03.216 INFO: Epoch 308: loss=29.3446, RMSE_E_per_atom=78.9 meV, RMSE_F=541.3 meV / A, RMSE_Mu_per_atom=20.62 mDebye
+2023-12-31 00:36:04.145 INFO: Epoch 310: loss=30.3698, RMSE_E_per_atom=100.0 meV, RMSE_F=550.6 meV / A, RMSE_Mu_per_atom=21.61 mDebye
+2023-12-31 00:36:05.072 INFO: Epoch 312: loss=31.0658, RMSE_E_per_atom=93.9 meV, RMSE_F=556.9 meV / A, RMSE_Mu_per_atom=19.87 mDebye
+2023-12-31 00:36:05.998 INFO: Epoch 314: loss=30.1375, RMSE_E_per_atom=89.4 meV, RMSE_F=548.5 meV / A, RMSE_Mu_per_atom=20.24 mDebye
+2023-12-31 00:36:06.926 INFO: Epoch 316: loss=23.5863, RMSE_E_per_atom=77.7 meV, RMSE_F=485.2 meV / A, RMSE_Mu_per_atom=19.82 mDebye
+2023-12-31 00:36:07.854 INFO: Epoch 318: loss=31.3970, RMSE_E_per_atom=76.2 meV, RMSE_F=559.9 meV / A, RMSE_Mu_per_atom=20.71 mDebye
+2023-12-31 00:36:08.783 INFO: Epoch 320: loss=30.4433, RMSE_E_per_atom=81.0 meV, RMSE_F=551.3 meV / A, RMSE_Mu_per_atom=20.42 mDebye
+2023-12-31 00:36:09.714 INFO: Epoch 322: loss=31.2382, RMSE_E_per_atom=66.2 meV, RMSE_F=558.5 meV / A, RMSE_Mu_per_atom=20.61 mDebye
+2023-12-31 00:36:10.643 INFO: Epoch 324: loss=29.4400, RMSE_E_per_atom=85.3 meV, RMSE_F=542.2 meV / A, RMSE_Mu_per_atom=19.59 mDebye
+2023-12-31 00:36:11.572 INFO: Epoch 326: loss=27.5777, RMSE_E_per_atom=80.2 meV, RMSE_F=524.7 meV / A, RMSE_Mu_per_atom=20.31 mDebye
+2023-12-31 00:36:12.514 INFO: Epoch 328: loss=27.6540, RMSE_E_per_atom=76.4 meV, RMSE_F=525.4 meV / A, RMSE_Mu_per_atom=20.51 mDebye
+2023-12-31 00:36:13.443 INFO: Epoch 330: loss=28.8207, RMSE_E_per_atom=74.0 meV, RMSE_F=536.4 meV / A, RMSE_Mu_per_atom=20.51 mDebye
+2023-12-31 00:36:14.372 INFO: Epoch 332: loss=31.2798, RMSE_E_per_atom=64.4 meV, RMSE_F=558.9 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:36:15.304 INFO: Epoch 334: loss=28.9803, RMSE_E_per_atom=64.0 meV, RMSE_F=537.9 meV / A, RMSE_Mu_per_atom=20.14 mDebye
+2023-12-31 00:36:16.231 INFO: Epoch 336: loss=26.2009, RMSE_E_per_atom=65.7 meV, RMSE_F=511.4 meV / A, RMSE_Mu_per_atom=20.06 mDebye
+2023-12-31 00:36:17.155 INFO: Epoch 338: loss=29.0666, RMSE_E_per_atom=52.3 meV, RMSE_F=538.7 meV / A, RMSE_Mu_per_atom=20.25 mDebye
+2023-12-31 00:36:18.078 INFO: Epoch 340: loss=31.2660, RMSE_E_per_atom=49.9 meV, RMSE_F=558.8 meV / A, RMSE_Mu_per_atom=20.70 mDebye
+2023-12-31 00:36:19.005 INFO: Epoch 342: loss=31.3599, RMSE_E_per_atom=52.4 meV, RMSE_F=559.6 meV / A, RMSE_Mu_per_atom=20.54 mDebye
+2023-12-31 00:36:19.937 INFO: Epoch 344: loss=30.6492, RMSE_E_per_atom=41.9 meV, RMSE_F=553.2 meV / A, RMSE_Mu_per_atom=20.62 mDebye
+2023-12-31 00:36:20.863 INFO: Epoch 346: loss=32.1509, RMSE_E_per_atom=61.7 meV, RMSE_F=566.6 meV / A, RMSE_Mu_per_atom=19.84 mDebye
+2023-12-31 00:36:21.794 INFO: Epoch 348: loss=30.4797, RMSE_E_per_atom=61.8 meV, RMSE_F=551.7 meV / A, RMSE_Mu_per_atom=20.05 mDebye
+2023-12-31 00:36:22.722 INFO: Epoch 350: loss=29.8078, RMSE_E_per_atom=59.5 meV, RMSE_F=545.6 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:36:23.649 INFO: Epoch 352: loss=28.5132, RMSE_E_per_atom=56.0 meV, RMSE_F=533.6 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:36:24.572 INFO: Epoch 354: loss=27.7447, RMSE_E_per_atom=64.5 meV, RMSE_F=526.3 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:36:25.504 INFO: Epoch 356: loss=27.1056, RMSE_E_per_atom=59.8 meV, RMSE_F=520.2 meV / A, RMSE_Mu_per_atom=19.82 mDebye
+2023-12-31 00:36:26.437 INFO: Epoch 358: loss=27.7086, RMSE_E_per_atom=57.4 meV, RMSE_F=526.0 meV / A, RMSE_Mu_per_atom=19.90 mDebye
+2023-12-31 00:36:27.369 INFO: Epoch 360: loss=27.8643, RMSE_E_per_atom=69.3 meV, RMSE_F=527.4 meV / A, RMSE_Mu_per_atom=19.83 mDebye
+2023-12-31 00:36:28.299 INFO: Epoch 362: loss=28.1537, RMSE_E_per_atom=48.7 meV, RMSE_F=530.2 meV / A, RMSE_Mu_per_atom=20.61 mDebye
+2023-12-31 00:36:29.229 INFO: Epoch 364: loss=27.3211, RMSE_E_per_atom=35.1 meV, RMSE_F=522.3 meV / A, RMSE_Mu_per_atom=20.62 mDebye
+2023-12-31 00:36:30.159 INFO: Epoch 366: loss=32.7470, RMSE_E_per_atom=65.2 meV, RMSE_F=571.8 meV / A, RMSE_Mu_per_atom=20.56 mDebye
+2023-12-31 00:36:31.088 INFO: Epoch 368: loss=25.7139, RMSE_E_per_atom=50.7 meV, RMSE_F=506.7 meV / A, RMSE_Mu_per_atom=19.96 mDebye
+2023-12-31 00:36:32.017 INFO: Epoch 370: loss=28.6939, RMSE_E_per_atom=61.6 meV, RMSE_F=535.3 meV / A, RMSE_Mu_per_atom=20.11 mDebye
+2023-12-31 00:36:32.944 INFO: Epoch 372: loss=25.8186, RMSE_E_per_atom=62.8 meV, RMSE_F=507.7 meV / A, RMSE_Mu_per_atom=20.56 mDebye
+2023-12-31 00:36:33.872 INFO: Epoch 374: loss=32.0269, RMSE_E_per_atom=67.6 meV, RMSE_F=565.5 meV / A, RMSE_Mu_per_atom=20.06 mDebye
+2023-12-31 00:36:34.802 INFO: Epoch 376: loss=26.1689, RMSE_E_per_atom=41.7 meV, RMSE_F=511.1 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:36:35.729 INFO: Epoch 378: loss=30.7014, RMSE_E_per_atom=59.6 meV, RMSE_F=553.7 meV / A, RMSE_Mu_per_atom=20.01 mDebye
+2023-12-31 00:36:36.657 INFO: Epoch 380: loss=27.5521, RMSE_E_per_atom=55.8 meV, RMSE_F=524.5 meV / A, RMSE_Mu_per_atom=20.10 mDebye
+2023-12-31 00:36:37.586 INFO: Epoch 382: loss=30.2934, RMSE_E_per_atom=46.7 meV, RMSE_F=550.0 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:36:38.517 INFO: Epoch 384: loss=25.8282, RMSE_E_per_atom=47.0 meV, RMSE_F=507.8 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:36:39.446 INFO: Epoch 386: loss=27.1231, RMSE_E_per_atom=48.8 meV, RMSE_F=520.4 meV / A, RMSE_Mu_per_atom=20.23 mDebye
+2023-12-31 00:36:40.376 INFO: Epoch 388: loss=28.4663, RMSE_E_per_atom=31.3 meV, RMSE_F=533.1 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:36:41.305 INFO: Epoch 390: loss=29.9303, RMSE_E_per_atom=44.4 meV, RMSE_F=546.7 meV / A, RMSE_Mu_per_atom=20.39 mDebye
+2023-12-31 00:36:42.236 INFO: Epoch 392: loss=32.3184, RMSE_E_per_atom=41.9 meV, RMSE_F=568.1 meV / A, RMSE_Mu_per_atom=19.95 mDebye
+2023-12-31 00:36:43.164 INFO: Epoch 394: loss=32.9102, RMSE_E_per_atom=36.6 meV, RMSE_F=573.3 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:36:44.096 INFO: Epoch 396: loss=30.2751, RMSE_E_per_atom=35.4 meV, RMSE_F=549.9 meV / A, RMSE_Mu_per_atom=20.03 mDebye
+2023-12-31 00:36:45.025 INFO: Epoch 398: loss=31.2244, RMSE_E_per_atom=30.6 meV, RMSE_F=558.4 meV / A, RMSE_Mu_per_atom=20.07 mDebye
+2023-12-31 00:36:45.955 INFO: Epoch 400: loss=29.5512, RMSE_E_per_atom=38.8 meV, RMSE_F=543.2 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:36:46.885 INFO: Epoch 402: loss=30.6355, RMSE_E_per_atom=28.2 meV, RMSE_F=553.1 meV / A, RMSE_Mu_per_atom=20.17 mDebye
+2023-12-31 00:36:47.814 INFO: Epoch 404: loss=30.9523, RMSE_E_per_atom=26.4 meV, RMSE_F=556.0 meV / A, RMSE_Mu_per_atom=20.07 mDebye
+2023-12-31 00:36:48.744 INFO: Epoch 406: loss=33.0281, RMSE_E_per_atom=25.8 meV, RMSE_F=574.3 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:36:49.673 INFO: Epoch 408: loss=27.2435, RMSE_E_per_atom=29.9 meV, RMSE_F=521.6 meV / A, RMSE_Mu_per_atom=20.09 mDebye
+2023-12-31 00:36:50.599 INFO: Epoch 410: loss=28.0592, RMSE_E_per_atom=31.8 meV, RMSE_F=529.3 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:36:51.529 INFO: Epoch 412: loss=29.2631, RMSE_E_per_atom=20.8 meV, RMSE_F=540.6 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:36:52.456 INFO: Epoch 414: loss=31.2785, RMSE_E_per_atom=29.6 meV, RMSE_F=558.9 meV / A, RMSE_Mu_per_atom=20.40 mDebye
+2023-12-31 00:36:53.383 INFO: Epoch 416: loss=32.6686, RMSE_E_per_atom=25.9 meV, RMSE_F=571.2 meV / A, RMSE_Mu_per_atom=20.06 mDebye
+2023-12-31 00:36:54.311 INFO: Epoch 418: loss=30.3159, RMSE_E_per_atom=14.1 meV, RMSE_F=550.2 meV / A, RMSE_Mu_per_atom=20.60 mDebye
+2023-12-31 00:36:55.240 INFO: Epoch 420: loss=28.7888, RMSE_E_per_atom=38.0 meV, RMSE_F=536.1 meV / A, RMSE_Mu_per_atom=21.13 mDebye
+2023-12-31 00:36:56.167 INFO: Epoch 422: loss=31.0892, RMSE_E_per_atom=25.3 meV, RMSE_F=557.2 meV / A, RMSE_Mu_per_atom=20.65 mDebye
+2023-12-31 00:36:57.094 INFO: Epoch 424: loss=29.0784, RMSE_E_per_atom=17.5 meV, RMSE_F=538.9 meV / A, RMSE_Mu_per_atom=20.05 mDebye
+2023-12-31 00:36:58.020 INFO: Epoch 426: loss=31.3838, RMSE_E_per_atom=23.5 meV, RMSE_F=559.8 meV / A, RMSE_Mu_per_atom=20.25 mDebye
+2023-12-31 00:36:58.949 INFO: Epoch 428: loss=31.0395, RMSE_E_per_atom=22.2 meV, RMSE_F=556.8 meV / A, RMSE_Mu_per_atom=20.35 mDebye
+2023-12-31 00:36:59.881 INFO: Epoch 430: loss=30.3269, RMSE_E_per_atom=21.1 meV, RMSE_F=550.3 meV / A, RMSE_Mu_per_atom=20.20 mDebye
+2023-12-31 00:37:00.812 INFO: Epoch 432: loss=30.6901, RMSE_E_per_atom=20.7 meV, RMSE_F=553.6 meV / A, RMSE_Mu_per_atom=20.12 mDebye
+2023-12-31 00:37:01.740 INFO: Epoch 434: loss=28.5701, RMSE_E_per_atom=14.5 meV, RMSE_F=534.1 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:37:02.669 INFO: Epoch 436: loss=31.3272, RMSE_E_per_atom=14.7 meV, RMSE_F=559.3 meV / A, RMSE_Mu_per_atom=20.19 mDebye
+2023-12-31 00:37:03.601 INFO: Epoch 438: loss=31.6270, RMSE_E_per_atom=17.2 meV, RMSE_F=562.0 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:37:04.531 INFO: Epoch 440: loss=31.7231, RMSE_E_per_atom=16.6 meV, RMSE_F=562.9 meV / A, RMSE_Mu_per_atom=20.07 mDebye
+2023-12-31 00:37:05.464 INFO: Epoch 442: loss=31.6777, RMSE_E_per_atom=18.7 meV, RMSE_F=562.5 meV / A, RMSE_Mu_per_atom=20.14 mDebye
+2023-12-31 00:37:06.395 INFO: Epoch 444: loss=31.3396, RMSE_E_per_atom=21.9 meV, RMSE_F=559.4 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:37:07.326 INFO: Epoch 446: loss=31.0156, RMSE_E_per_atom=13.5 meV, RMSE_F=556.5 meV / A, RMSE_Mu_per_atom=20.42 mDebye
+2023-12-31 00:37:08.252 INFO: Epoch 448: loss=31.5565, RMSE_E_per_atom=10.2 meV, RMSE_F=561.4 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:37:09.181 INFO: Epoch 450: loss=32.5111, RMSE_E_per_atom=15.4 meV, RMSE_F=569.8 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:37:10.111 INFO: Epoch 452: loss=32.3240, RMSE_E_per_atom=15.1 meV, RMSE_F=568.2 meV / A, RMSE_Mu_per_atom=20.19 mDebye
+2023-12-31 00:37:11.042 INFO: Epoch 454: loss=30.6944, RMSE_E_per_atom=10.3 meV, RMSE_F=553.7 meV / A, RMSE_Mu_per_atom=20.09 mDebye
+2023-12-31 00:37:11.971 INFO: Epoch 456: loss=31.8985, RMSE_E_per_atom=9.9 meV, RMSE_F=564.4 meV / A, RMSE_Mu_per_atom=20.10 mDebye
+2023-12-31 00:37:12.904 INFO: Epoch 458: loss=31.4782, RMSE_E_per_atom=10.7 meV, RMSE_F=560.7 meV / A, RMSE_Mu_per_atom=20.19 mDebye
+2023-12-31 00:37:13.834 INFO: Epoch 460: loss=30.8538, RMSE_E_per_atom=13.8 meV, RMSE_F=555.1 meV / A, RMSE_Mu_per_atom=20.10 mDebye
+2023-12-31 00:37:14.764 INFO: Epoch 462: loss=32.1497, RMSE_E_per_atom=11.9 meV, RMSE_F=566.6 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:37:15.693 INFO: Epoch 464: loss=30.6830, RMSE_E_per_atom=7.8 meV, RMSE_F=553.6 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:37:16.624 INFO: Epoch 466: loss=30.0122, RMSE_E_per_atom=18.3 meV, RMSE_F=547.5 meV / A, RMSE_Mu_per_atom=20.25 mDebye
+2023-12-31 00:37:17.552 INFO: Epoch 468: loss=32.7791, RMSE_E_per_atom=15.4 meV, RMSE_F=572.2 meV / A, RMSE_Mu_per_atom=20.23 mDebye
+2023-12-31 00:37:18.483 INFO: Epoch 470: loss=31.4795, RMSE_E_per_atom=17.5 meV, RMSE_F=560.7 meV / A, RMSE_Mu_per_atom=20.20 mDebye
+2023-12-31 00:37:19.408 INFO: Epoch 472: loss=32.8603, RMSE_E_per_atom=9.0 meV, RMSE_F=572.9 meV / A, RMSE_Mu_per_atom=20.03 mDebye
+2023-12-31 00:37:20.339 INFO: Epoch 474: loss=33.0530, RMSE_E_per_atom=17.8 meV, RMSE_F=574.6 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:37:21.269 INFO: Epoch 476: loss=32.8391, RMSE_E_per_atom=16.6 meV, RMSE_F=572.7 meV / A, RMSE_Mu_per_atom=19.93 mDebye
+2023-12-31 00:37:22.200 INFO: Epoch 478: loss=33.8374, RMSE_E_per_atom=15.9 meV, RMSE_F=581.3 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:37:23.131 INFO: Epoch 480: loss=35.1860, RMSE_E_per_atom=15.9 meV, RMSE_F=592.8 meV / A, RMSE_Mu_per_atom=19.92 mDebye
+2023-12-31 00:37:24.063 INFO: Epoch 482: loss=34.5075, RMSE_E_per_atom=18.6 meV, RMSE_F=587.1 meV / A, RMSE_Mu_per_atom=19.97 mDebye
+2023-12-31 00:37:24.994 INFO: Epoch 484: loss=31.6606, RMSE_E_per_atom=17.0 meV, RMSE_F=562.3 meV / A, RMSE_Mu_per_atom=20.29 mDebye
+2023-12-31 00:37:25.924 INFO: Epoch 486: loss=32.0026, RMSE_E_per_atom=13.9 meV, RMSE_F=565.3 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:37:26.854 INFO: Epoch 488: loss=31.7826, RMSE_E_per_atom=15.4 meV, RMSE_F=563.4 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:37:27.785 INFO: Epoch 490: loss=31.6724, RMSE_E_per_atom=14.8 meV, RMSE_F=562.4 meV / A, RMSE_Mu_per_atom=20.12 mDebye
+2023-12-31 00:37:28.716 INFO: Epoch 492: loss=33.3135, RMSE_E_per_atom=11.9 meV, RMSE_F=576.8 meV / A, RMSE_Mu_per_atom=20.07 mDebye
+2023-12-31 00:37:29.645 INFO: Epoch 494: loss=34.2814, RMSE_E_per_atom=12.5 meV, RMSE_F=585.2 meV / A, RMSE_Mu_per_atom=20.07 mDebye
+2023-12-31 00:37:30.576 INFO: Epoch 496: loss=32.8544, RMSE_E_per_atom=12.9 meV, RMSE_F=572.8 meV / A, RMSE_Mu_per_atom=20.09 mDebye
+2023-12-31 00:37:31.507 INFO: Epoch 498: loss=32.8886, RMSE_E_per_atom=11.9 meV, RMSE_F=573.1 meV / A, RMSE_Mu_per_atom=19.87 mDebye
+2023-12-31 00:37:32.436 INFO: Epoch 500: loss=33.0008, RMSE_E_per_atom=11.9 meV, RMSE_F=574.1 meV / A, RMSE_Mu_per_atom=19.93 mDebye
+2023-12-31 00:37:33.367 INFO: Epoch 502: loss=33.7872, RMSE_E_per_atom=10.2 meV, RMSE_F=580.9 meV / A, RMSE_Mu_per_atom=20.01 mDebye
+2023-12-31 00:37:34.299 INFO: Epoch 504: loss=33.0457, RMSE_E_per_atom=12.5 meV, RMSE_F=574.5 meV / A, RMSE_Mu_per_atom=20.06 mDebye
+2023-12-31 00:37:35.230 INFO: Epoch 506: loss=33.3208, RMSE_E_per_atom=11.8 meV, RMSE_F=576.9 meV / A, RMSE_Mu_per_atom=20.20 mDebye
+2023-12-31 00:37:36.160 INFO: Epoch 508: loss=32.1433, RMSE_E_per_atom=11.5 meV, RMSE_F=566.6 meV / A, RMSE_Mu_per_atom=19.98 mDebye
+2023-12-31 00:37:37.090 INFO: Epoch 510: loss=32.5288, RMSE_E_per_atom=11.2 meV, RMSE_F=570.0 meV / A, RMSE_Mu_per_atom=20.12 mDebye
+2023-12-31 00:37:38.021 INFO: Epoch 512: loss=33.7034, RMSE_E_per_atom=13.4 meV, RMSE_F=580.2 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:37:38.952 INFO: Epoch 514: loss=33.4730, RMSE_E_per_atom=9.7 meV, RMSE_F=578.2 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:37:39.881 INFO: Epoch 516: loss=32.7679, RMSE_E_per_atom=19.0 meV, RMSE_F=572.1 meV / A, RMSE_Mu_per_atom=20.23 mDebye
+2023-12-31 00:37:40.814 INFO: Epoch 518: loss=33.0125, RMSE_E_per_atom=13.5 meV, RMSE_F=574.2 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:37:41.748 INFO: Epoch 520: loss=32.6824, RMSE_E_per_atom=14.5 meV, RMSE_F=571.3 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:37:42.680 INFO: Epoch 522: loss=33.0863, RMSE_E_per_atom=8.0 meV, RMSE_F=574.9 meV / A, RMSE_Mu_per_atom=20.14 mDebye
+2023-12-31 00:37:43.612 INFO: Epoch 524: loss=33.5420, RMSE_E_per_atom=13.3 meV, RMSE_F=578.8 meV / A, RMSE_Mu_per_atom=20.04 mDebye
+2023-12-31 00:37:44.540 INFO: Epoch 526: loss=33.1444, RMSE_E_per_atom=15.6 meV, RMSE_F=575.4 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:37:45.469 INFO: Epoch 528: loss=32.4079, RMSE_E_per_atom=10.7 meV, RMSE_F=568.9 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:37:46.401 INFO: Epoch 530: loss=33.1899, RMSE_E_per_atom=9.9 meV, RMSE_F=575.8 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:37:47.327 INFO: Epoch 532: loss=33.2005, RMSE_E_per_atom=10.6 meV, RMSE_F=575.8 meV / A, RMSE_Mu_per_atom=20.29 mDebye
+2023-12-31 00:37:48.258 INFO: Epoch 534: loss=32.5137, RMSE_E_per_atom=11.7 meV, RMSE_F=569.8 meV / A, RMSE_Mu_per_atom=20.16 mDebye
+2023-12-31 00:37:49.189 INFO: Epoch 536: loss=33.3889, RMSE_E_per_atom=9.4 meV, RMSE_F=577.5 meV / A, RMSE_Mu_per_atom=20.09 mDebye
+2023-12-31 00:37:50.119 INFO: Epoch 538: loss=33.6617, RMSE_E_per_atom=9.4 meV, RMSE_F=579.8 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:37:51.047 INFO: Epoch 540: loss=32.6938, RMSE_E_per_atom=10.0 meV, RMSE_F=571.4 meV / A, RMSE_Mu_per_atom=20.16 mDebye
+2023-12-31 00:37:51.977 INFO: Epoch 542: loss=33.4040, RMSE_E_per_atom=7.7 meV, RMSE_F=577.6 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:37:52.907 INFO: Epoch 544: loss=33.1748, RMSE_E_per_atom=9.5 meV, RMSE_F=575.6 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:37:53.836 INFO: Epoch 546: loss=34.0022, RMSE_E_per_atom=8.8 meV, RMSE_F=582.8 meV / A, RMSE_Mu_per_atom=20.23 mDebye
+2023-12-31 00:37:54.767 INFO: Epoch 548: loss=32.7111, RMSE_E_per_atom=10.5 meV, RMSE_F=571.6 meV / A, RMSE_Mu_per_atom=20.24 mDebye
+2023-12-31 00:37:55.698 INFO: Epoch 550: loss=34.0706, RMSE_E_per_atom=10.9 meV, RMSE_F=583.4 meV / A, RMSE_Mu_per_atom=20.08 mDebye
+2023-12-31 00:37:56.628 INFO: Epoch 552: loss=33.6953, RMSE_E_per_atom=9.7 meV, RMSE_F=580.1 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:37:57.557 INFO: Epoch 554: loss=33.3151, RMSE_E_per_atom=6.7 meV, RMSE_F=576.8 meV / A, RMSE_Mu_per_atom=20.21 mDebye
+2023-12-31 00:37:58.485 INFO: Epoch 556: loss=32.6620, RMSE_E_per_atom=11.5 meV, RMSE_F=571.1 meV / A, RMSE_Mu_per_atom=20.29 mDebye
+2023-12-31 00:37:59.414 INFO: Epoch 558: loss=34.0128, RMSE_E_per_atom=11.3 meV, RMSE_F=582.8 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:38:00.343 INFO: Epoch 560: loss=34.4468, RMSE_E_per_atom=10.3 meV, RMSE_F=586.6 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:38:01.274 INFO: Epoch 562: loss=33.9298, RMSE_E_per_atom=8.8 meV, RMSE_F=582.1 meV / A, RMSE_Mu_per_atom=20.28 mDebye
+2023-12-31 00:38:02.201 INFO: Epoch 564: loss=33.3445, RMSE_E_per_atom=9.0 meV, RMSE_F=577.1 meV / A, RMSE_Mu_per_atom=20.39 mDebye
+2023-12-31 00:38:03.132 INFO: Epoch 566: loss=32.9709, RMSE_E_per_atom=7.4 meV, RMSE_F=573.8 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:38:04.061 INFO: Epoch 568: loss=33.0126, RMSE_E_per_atom=9.9 meV, RMSE_F=574.2 meV / A, RMSE_Mu_per_atom=20.17 mDebye
+2023-12-31 00:38:04.991 INFO: Epoch 570: loss=33.4439, RMSE_E_per_atom=12.2 meV, RMSE_F=578.0 meV / A, RMSE_Mu_per_atom=20.05 mDebye
+2023-12-31 00:38:05.923 INFO: Epoch 572: loss=33.8784, RMSE_E_per_atom=14.0 meV, RMSE_F=581.7 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:38:06.853 INFO: Epoch 574: loss=33.8435, RMSE_E_per_atom=8.0 meV, RMSE_F=581.4 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:38:07.781 INFO: Epoch 576: loss=34.1828, RMSE_E_per_atom=10.3 meV, RMSE_F=584.3 meV / A, RMSE_Mu_per_atom=20.21 mDebye
+2023-12-31 00:38:08.711 INFO: Epoch 578: loss=34.1863, RMSE_E_per_atom=8.9 meV, RMSE_F=584.3 meV / A, RMSE_Mu_per_atom=20.14 mDebye
+2023-12-31 00:38:09.639 INFO: Epoch 580: loss=34.1143, RMSE_E_per_atom=9.8 meV, RMSE_F=583.7 meV / A, RMSE_Mu_per_atom=20.21 mDebye
+2023-12-31 00:38:10.567 INFO: Epoch 582: loss=34.2183, RMSE_E_per_atom=8.5 meV, RMSE_F=584.6 meV / A, RMSE_Mu_per_atom=20.28 mDebye
+2023-12-31 00:38:11.498 INFO: Epoch 584: loss=33.9992, RMSE_E_per_atom=8.3 meV, RMSE_F=582.7 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:38:12.426 INFO: Epoch 586: loss=33.8179, RMSE_E_per_atom=8.2 meV, RMSE_F=581.2 meV / A, RMSE_Mu_per_atom=20.35 mDebye
+2023-12-31 00:38:13.356 INFO: Epoch 588: loss=34.5519, RMSE_E_per_atom=8.1 meV, RMSE_F=587.5 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:38:14.285 INFO: Epoch 590: loss=34.2861, RMSE_E_per_atom=7.9 meV, RMSE_F=585.2 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:38:15.215 INFO: Epoch 592: loss=34.7098, RMSE_E_per_atom=8.3 meV, RMSE_F=588.8 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:38:16.143 INFO: Epoch 594: loss=34.4270, RMSE_E_per_atom=8.0 meV, RMSE_F=586.4 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:38:17.073 INFO: Epoch 596: loss=34.8834, RMSE_E_per_atom=7.4 meV, RMSE_F=590.3 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:38:18.000 INFO: Epoch 598: loss=34.7405, RMSE_E_per_atom=6.9 meV, RMSE_F=589.1 meV / A, RMSE_Mu_per_atom=20.13 mDebye
+2023-12-31 00:38:18.928 INFO: Epoch 600: loss=34.3524, RMSE_E_per_atom=8.2 meV, RMSE_F=585.8 meV / A, RMSE_Mu_per_atom=20.14 mDebye
+2023-12-31 00:38:19.857 INFO: Epoch 602: loss=34.4679, RMSE_E_per_atom=7.4 meV, RMSE_F=586.7 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:38:20.791 INFO: Epoch 604: loss=34.8449, RMSE_E_per_atom=7.7 meV, RMSE_F=590.0 meV / A, RMSE_Mu_per_atom=20.05 mDebye
+2023-12-31 00:38:21.721 INFO: Epoch 606: loss=34.8053, RMSE_E_per_atom=7.3 meV, RMSE_F=589.6 meV / A, RMSE_Mu_per_atom=20.10 mDebye
+2023-12-31 00:38:22.651 INFO: Epoch 608: loss=35.2890, RMSE_E_per_atom=6.9 meV, RMSE_F=593.7 meV / A, RMSE_Mu_per_atom=20.16 mDebye
+2023-12-31 00:38:23.579 INFO: Epoch 610: loss=34.7409, RMSE_E_per_atom=7.5 meV, RMSE_F=589.1 meV / A, RMSE_Mu_per_atom=20.16 mDebye
+2023-12-31 00:38:24.508 INFO: Epoch 612: loss=34.8976, RMSE_E_per_atom=7.6 meV, RMSE_F=590.4 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:38:25.436 INFO: Epoch 614: loss=35.3176, RMSE_E_per_atom=6.6 meV, RMSE_F=593.9 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:38:26.367 INFO: Epoch 616: loss=34.9315, RMSE_E_per_atom=7.4 meV, RMSE_F=590.7 meV / A, RMSE_Mu_per_atom=20.11 mDebye
+2023-12-31 00:38:27.295 INFO: Epoch 618: loss=35.2592, RMSE_E_per_atom=7.1 meV, RMSE_F=593.5 meV / A, RMSE_Mu_per_atom=20.16 mDebye
+2023-12-31 00:38:28.227 INFO: Epoch 620: loss=35.0582, RMSE_E_per_atom=7.3 meV, RMSE_F=591.8 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:38:29.153 INFO: Epoch 622: loss=35.2716, RMSE_E_per_atom=6.9 meV, RMSE_F=593.6 meV / A, RMSE_Mu_per_atom=20.09 mDebye
+2023-12-31 00:38:30.085 INFO: Epoch 624: loss=35.3908, RMSE_E_per_atom=6.8 meV, RMSE_F=594.6 meV / A, RMSE_Mu_per_atom=20.16 mDebye
+2023-12-31 00:38:31.016 INFO: Epoch 626: loss=35.0206, RMSE_E_per_atom=7.2 meV, RMSE_F=591.4 meV / A, RMSE_Mu_per_atom=20.21 mDebye
+2023-12-31 00:38:31.946 INFO: Epoch 628: loss=35.5155, RMSE_E_per_atom=6.6 meV, RMSE_F=595.6 meV / A, RMSE_Mu_per_atom=20.24 mDebye
+2023-12-31 00:38:32.873 INFO: Epoch 630: loss=35.1473, RMSE_E_per_atom=7.3 meV, RMSE_F=592.5 meV / A, RMSE_Mu_per_atom=20.31 mDebye
+2023-12-31 00:38:33.801 INFO: Epoch 632: loss=35.4341, RMSE_E_per_atom=6.7 meV, RMSE_F=594.9 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:38:34.728 INFO: Epoch 634: loss=35.6729, RMSE_E_per_atom=6.8 meV, RMSE_F=596.9 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:38:35.658 INFO: Epoch 636: loss=35.3736, RMSE_E_per_atom=6.8 meV, RMSE_F=594.4 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:38:36.589 INFO: Epoch 638: loss=35.6618, RMSE_E_per_atom=6.4 meV, RMSE_F=596.8 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:38:37.518 INFO: Epoch 640: loss=35.2338, RMSE_E_per_atom=7.1 meV, RMSE_F=593.2 meV / A, RMSE_Mu_per_atom=20.20 mDebye
+2023-12-31 00:38:38.448 INFO: Epoch 642: loss=35.5340, RMSE_E_per_atom=6.9 meV, RMSE_F=595.8 meV / A, RMSE_Mu_per_atom=20.19 mDebye
+2023-12-31 00:38:39.378 INFO: Epoch 644: loss=35.6487, RMSE_E_per_atom=7.0 meV, RMSE_F=596.7 meV / A, RMSE_Mu_per_atom=20.10 mDebye
+2023-12-31 00:38:40.309 INFO: Epoch 646: loss=35.6744, RMSE_E_per_atom=7.2 meV, RMSE_F=596.9 meV / A, RMSE_Mu_per_atom=20.12 mDebye
+2023-12-31 00:38:41.238 INFO: Epoch 648: loss=35.5124, RMSE_E_per_atom=6.9 meV, RMSE_F=595.6 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:38:42.164 INFO: Epoch 650: loss=35.6480, RMSE_E_per_atom=6.7 meV, RMSE_F=596.7 meV / A, RMSE_Mu_per_atom=20.18 mDebye
+2023-12-31 00:38:43.090 INFO: Epoch 652: loss=35.8973, RMSE_E_per_atom=6.8 meV, RMSE_F=598.8 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:38:44.017 INFO: Epoch 654: loss=35.4711, RMSE_E_per_atom=6.9 meV, RMSE_F=595.2 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:38:44.948 INFO: Epoch 656: loss=35.7754, RMSE_E_per_atom=6.7 meV, RMSE_F=597.8 meV / A, RMSE_Mu_per_atom=20.30 mDebye
+2023-12-31 00:38:45.879 INFO: Epoch 658: loss=35.7439, RMSE_E_per_atom=7.2 meV, RMSE_F=597.5 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:38:46.810 INFO: Epoch 660: loss=35.6612, RMSE_E_per_atom=6.5 meV, RMSE_F=596.8 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:38:47.742 INFO: Epoch 662: loss=35.7854, RMSE_E_per_atom=6.7 meV, RMSE_F=597.9 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:38:48.671 INFO: Epoch 664: loss=35.8924, RMSE_E_per_atom=6.6 meV, RMSE_F=598.8 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:38:49.600 INFO: Epoch 666: loss=35.7371, RMSE_E_per_atom=6.2 meV, RMSE_F=597.5 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:38:50.527 INFO: Epoch 668: loss=35.9159, RMSE_E_per_atom=6.8 meV, RMSE_F=599.0 meV / A, RMSE_Mu_per_atom=20.21 mDebye
+2023-12-31 00:38:51.459 INFO: Epoch 670: loss=36.0966, RMSE_E_per_atom=6.9 meV, RMSE_F=600.5 meV / A, RMSE_Mu_per_atom=20.20 mDebye
+2023-12-31 00:38:52.387 INFO: Epoch 672: loss=35.9489, RMSE_E_per_atom=6.7 meV, RMSE_F=599.2 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:38:53.318 INFO: Epoch 674: loss=36.1306, RMSE_E_per_atom=6.5 meV, RMSE_F=600.8 meV / A, RMSE_Mu_per_atom=20.11 mDebye
+2023-12-31 00:38:54.248 INFO: Epoch 676: loss=35.8720, RMSE_E_per_atom=7.3 meV, RMSE_F=598.6 meV / A, RMSE_Mu_per_atom=20.19 mDebye
+2023-12-31 00:38:55.183 INFO: Epoch 678: loss=36.0793, RMSE_E_per_atom=6.5 meV, RMSE_F=600.3 meV / A, RMSE_Mu_per_atom=20.19 mDebye
+2023-12-31 00:38:56.114 INFO: Epoch 680: loss=36.0829, RMSE_E_per_atom=6.6 meV, RMSE_F=600.4 meV / A, RMSE_Mu_per_atom=20.22 mDebye
+2023-12-31 00:38:57.043 INFO: Epoch 682: loss=35.9782, RMSE_E_per_atom=6.5 meV, RMSE_F=599.5 meV / A, RMSE_Mu_per_atom=20.16 mDebye
+2023-12-31 00:38:57.973 INFO: Epoch 684: loss=36.1610, RMSE_E_per_atom=6.6 meV, RMSE_F=601.0 meV / A, RMSE_Mu_per_atom=20.15 mDebye
+2023-12-31 00:38:58.903 INFO: Epoch 686: loss=36.1610, RMSE_E_per_atom=6.6 meV, RMSE_F=601.0 meV / A, RMSE_Mu_per_atom=20.12 mDebye
+2023-12-31 00:38:59.832 INFO: Epoch 688: loss=35.9264, RMSE_E_per_atom=6.6 meV, RMSE_F=599.0 meV / A, RMSE_Mu_per_atom=20.21 mDebye
+2023-12-31 00:39:00.761 INFO: Epoch 690: loss=36.2437, RMSE_E_per_atom=6.9 meV, RMSE_F=601.7 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:39:01.689 INFO: Epoch 692: loss=36.0205, RMSE_E_per_atom=6.6 meV, RMSE_F=599.8 meV / A, RMSE_Mu_per_atom=20.24 mDebye
+2023-12-31 00:39:02.618 INFO: Epoch 694: loss=36.2135, RMSE_E_per_atom=6.7 meV, RMSE_F=601.4 meV / A, RMSE_Mu_per_atom=20.24 mDebye
+2023-12-31 00:39:03.547 INFO: Epoch 696: loss=36.1944, RMSE_E_per_atom=6.8 meV, RMSE_F=601.3 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:39:04.476 INFO: Epoch 698: loss=36.0639, RMSE_E_per_atom=6.7 meV, RMSE_F=600.2 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:39:05.408 INFO: Epoch 700: loss=36.2034, RMSE_E_per_atom=6.6 meV, RMSE_F=601.3 meV / A, RMSE_Mu_per_atom=20.30 mDebye
+2023-12-31 00:39:06.338 INFO: Epoch 702: loss=36.1772, RMSE_E_per_atom=6.6 meV, RMSE_F=601.1 meV / A, RMSE_Mu_per_atom=20.30 mDebye
+2023-12-31 00:39:07.266 INFO: Epoch 704: loss=36.1221, RMSE_E_per_atom=6.6 meV, RMSE_F=600.7 meV / A, RMSE_Mu_per_atom=20.35 mDebye
+2023-12-31 00:39:08.195 INFO: Epoch 706: loss=36.3013, RMSE_E_per_atom=6.4 meV, RMSE_F=602.2 meV / A, RMSE_Mu_per_atom=20.35 mDebye
+2023-12-31 00:39:09.124 INFO: Epoch 708: loss=36.2006, RMSE_E_per_atom=6.5 meV, RMSE_F=601.3 meV / A, RMSE_Mu_per_atom=20.29 mDebye
+2023-12-31 00:39:10.055 INFO: Epoch 710: loss=36.3326, RMSE_E_per_atom=6.6 meV, RMSE_F=602.4 meV / A, RMSE_Mu_per_atom=20.31 mDebye
+2023-12-31 00:39:10.986 INFO: Epoch 712: loss=36.4676, RMSE_E_per_atom=6.4 meV, RMSE_F=603.5 meV / A, RMSE_Mu_per_atom=20.29 mDebye
+2023-12-31 00:39:11.915 INFO: Epoch 714: loss=36.4113, RMSE_E_per_atom=6.7 meV, RMSE_F=603.1 meV / A, RMSE_Mu_per_atom=20.28 mDebye
+2023-12-31 00:39:12.845 INFO: Epoch 716: loss=36.3367, RMSE_E_per_atom=6.7 meV, RMSE_F=602.5 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:39:13.775 INFO: Epoch 718: loss=36.2850, RMSE_E_per_atom=6.4 meV, RMSE_F=602.0 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:39:14.705 INFO: Epoch 720: loss=36.4727, RMSE_E_per_atom=6.7 meV, RMSE_F=603.6 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:39:15.632 INFO: Epoch 722: loss=36.5611, RMSE_E_per_atom=6.8 meV, RMSE_F=604.3 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:39:16.561 INFO: Epoch 724: loss=36.3892, RMSE_E_per_atom=6.6 meV, RMSE_F=602.9 meV / A, RMSE_Mu_per_atom=20.40 mDebye
+2023-12-31 00:39:17.492 INFO: Epoch 726: loss=36.5646, RMSE_E_per_atom=6.8 meV, RMSE_F=604.3 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:39:18.423 INFO: Epoch 728: loss=36.4990, RMSE_E_per_atom=6.5 meV, RMSE_F=603.8 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:39:19.353 INFO: Epoch 730: loss=36.4107, RMSE_E_per_atom=6.8 meV, RMSE_F=603.1 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:39:20.284 INFO: Epoch 732: loss=36.4977, RMSE_E_per_atom=6.6 meV, RMSE_F=603.8 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:39:21.212 INFO: Epoch 734: loss=36.5173, RMSE_E_per_atom=6.7 meV, RMSE_F=604.0 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:39:22.142 INFO: Epoch 736: loss=36.4736, RMSE_E_per_atom=6.3 meV, RMSE_F=603.6 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:39:23.073 INFO: Epoch 738: loss=36.4628, RMSE_E_per_atom=6.6 meV, RMSE_F=603.5 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:39:24.003 INFO: Epoch 740: loss=36.5644, RMSE_E_per_atom=6.6 meV, RMSE_F=604.3 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:39:24.934 INFO: Epoch 742: loss=36.5324, RMSE_E_per_atom=6.7 meV, RMSE_F=604.1 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:39:25.865 INFO: Epoch 744: loss=36.5398, RMSE_E_per_atom=6.6 meV, RMSE_F=604.1 meV / A, RMSE_Mu_per_atom=20.42 mDebye
+2023-12-31 00:39:26.793 INFO: Epoch 746: loss=36.5118, RMSE_E_per_atom=6.6 meV, RMSE_F=603.9 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:39:27.724 INFO: Epoch 748: loss=36.6634, RMSE_E_per_atom=6.5 meV, RMSE_F=605.2 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:39:28.651 INFO: Epoch 750: loss=36.6427, RMSE_E_per_atom=6.8 meV, RMSE_F=605.0 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:39:29.577 INFO: Epoch 752: loss=36.6625, RMSE_E_per_atom=6.5 meV, RMSE_F=605.2 meV / A, RMSE_Mu_per_atom=20.35 mDebye
+2023-12-31 00:39:30.508 INFO: Epoch 754: loss=36.6009, RMSE_E_per_atom=6.8 meV, RMSE_F=604.6 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:39:31.436 INFO: Epoch 756: loss=36.6831, RMSE_E_per_atom=6.5 meV, RMSE_F=605.3 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:39:32.365 INFO: Epoch 758: loss=36.5994, RMSE_E_per_atom=6.7 meV, RMSE_F=604.6 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:39:33.296 INFO: Epoch 760: loss=36.8323, RMSE_E_per_atom=6.5 meV, RMSE_F=606.6 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:39:34.223 INFO: Epoch 762: loss=36.7130, RMSE_E_per_atom=6.5 meV, RMSE_F=605.6 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:39:35.153 INFO: Epoch 764: loss=36.7488, RMSE_E_per_atom=6.7 meV, RMSE_F=605.9 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:39:36.082 INFO: Epoch 766: loss=36.7844, RMSE_E_per_atom=6.6 meV, RMSE_F=606.2 meV / A, RMSE_Mu_per_atom=20.40 mDebye
+2023-12-31 00:39:37.011 INFO: Epoch 768: loss=36.7357, RMSE_E_per_atom=6.5 meV, RMSE_F=605.8 meV / A, RMSE_Mu_per_atom=20.41 mDebye
+2023-12-31 00:39:37.939 INFO: Epoch 770: loss=36.8647, RMSE_E_per_atom=6.5 meV, RMSE_F=606.8 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:39:38.865 INFO: Epoch 772: loss=36.7193, RMSE_E_per_atom=6.6 meV, RMSE_F=605.6 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:39:39.792 INFO: Epoch 774: loss=36.8638, RMSE_E_per_atom=6.8 meV, RMSE_F=606.8 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:39:40.721 INFO: Epoch 776: loss=36.7869, RMSE_E_per_atom=6.5 meV, RMSE_F=606.2 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:39:41.648 INFO: Epoch 778: loss=36.7812, RMSE_E_per_atom=6.9 meV, RMSE_F=606.1 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:39:42.576 INFO: Epoch 780: loss=36.8199, RMSE_E_per_atom=6.5 meV, RMSE_F=606.5 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:39:43.505 INFO: Epoch 782: loss=36.8843, RMSE_E_per_atom=6.7 meV, RMSE_F=607.0 meV / A, RMSE_Mu_per_atom=20.41 mDebye
+2023-12-31 00:39:44.435 INFO: Epoch 784: loss=36.8520, RMSE_E_per_atom=6.5 meV, RMSE_F=606.7 meV / A, RMSE_Mu_per_atom=20.42 mDebye
+2023-12-31 00:39:45.362 INFO: Epoch 786: loss=36.8896, RMSE_E_per_atom=6.6 meV, RMSE_F=607.0 meV / A, RMSE_Mu_per_atom=20.41 mDebye
+2023-12-31 00:39:46.289 INFO: Epoch 788: loss=36.9366, RMSE_E_per_atom=6.5 meV, RMSE_F=607.4 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:39:47.217 INFO: Epoch 790: loss=36.8334, RMSE_E_per_atom=6.6 meV, RMSE_F=606.6 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:39:48.145 INFO: Epoch 792: loss=36.8844, RMSE_E_per_atom=6.4 meV, RMSE_F=607.0 meV / A, RMSE_Mu_per_atom=20.42 mDebye
+2023-12-31 00:39:49.072 INFO: Epoch 794: loss=36.9454, RMSE_E_per_atom=6.7 meV, RMSE_F=607.5 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:39:50.001 INFO: Epoch 796: loss=36.8962, RMSE_E_per_atom=6.6 meV, RMSE_F=607.1 meV / A, RMSE_Mu_per_atom=20.48 mDebye
+2023-12-31 00:39:50.929 INFO: Epoch 798: loss=36.9220, RMSE_E_per_atom=6.5 meV, RMSE_F=607.3 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:39:51.381 INFO: Changing loss based on SWA
+2023-12-31 00:39:51.858 INFO: Epoch 800: loss=36.9397, RMSE_E_per_atom=7.6 meV, RMSE_F=607.0 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:39:53.056 INFO: Epoch 802: loss=36.6932, RMSE_E_per_atom=9.1 meV, RMSE_F=604.7 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:39:54.251 INFO: Epoch 804: loss=36.8958, RMSE_E_per_atom=5.6 meV, RMSE_F=606.8 meV / A, RMSE_Mu_per_atom=20.41 mDebye
+2023-12-31 00:39:55.185 INFO: Epoch 806: loss=36.5085, RMSE_E_per_atom=12.7 meV, RMSE_F=602.5 meV / A, RMSE_Mu_per_atom=20.39 mDebye
+2023-12-31 00:39:56.387 INFO: Epoch 808: loss=36.8300, RMSE_E_per_atom=6.1 meV, RMSE_F=606.2 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:39:57.319 INFO: Epoch 810: loss=36.8746, RMSE_E_per_atom=11.2 meV, RMSE_F=605.9 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:39:58.253 INFO: Epoch 812: loss=36.8899, RMSE_E_per_atom=8.2 meV, RMSE_F=606.5 meV / A, RMSE_Mu_per_atom=20.54 mDebye
+2023-12-31 00:39:59.187 INFO: Epoch 814: loss=36.6522, RMSE_E_per_atom=5.7 meV, RMSE_F=604.8 meV / A, RMSE_Mu_per_atom=20.48 mDebye
+2023-12-31 00:40:00.121 INFO: Epoch 816: loss=37.1189, RMSE_E_per_atom=13.5 meV, RMSE_F=607.4 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:40:01.056 INFO: Epoch 818: loss=37.0767, RMSE_E_per_atom=9.0 meV, RMSE_F=607.9 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:40:01.989 INFO: Epoch 820: loss=36.6828, RMSE_E_per_atom=6.9 meV, RMSE_F=604.9 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:40:02.923 INFO: Epoch 822: loss=37.0162, RMSE_E_per_atom=8.0 meV, RMSE_F=607.5 meV / A, RMSE_Mu_per_atom=20.42 mDebye
+2023-12-31 00:40:03.857 INFO: Epoch 824: loss=36.7400, RMSE_E_per_atom=8.7 meV, RMSE_F=605.2 meV / A, RMSE_Mu_per_atom=20.40 mDebye
+2023-12-31 00:40:04.794 INFO: Epoch 826: loss=36.9209, RMSE_E_per_atom=11.1 meV, RMSE_F=606.3 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:40:05.734 INFO: Epoch 828: loss=36.8654, RMSE_E_per_atom=6.8 meV, RMSE_F=606.4 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:40:06.671 INFO: Epoch 830: loss=37.0734, RMSE_E_per_atom=12.9 meV, RMSE_F=607.2 meV / A, RMSE_Mu_per_atom=20.31 mDebye
+2023-12-31 00:40:07.607 INFO: Epoch 832: loss=37.1026, RMSE_E_per_atom=10.4 meV, RMSE_F=607.9 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:40:08.540 INFO: Epoch 834: loss=36.8325, RMSE_E_per_atom=6.8 meV, RMSE_F=606.2 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:40:09.477 INFO: Epoch 836: loss=36.8211, RMSE_E_per_atom=5.6 meV, RMSE_F=606.2 meV / A, RMSE_Mu_per_atom=20.29 mDebye
+2023-12-31 00:40:10.412 INFO: Epoch 838: loss=37.0932, RMSE_E_per_atom=9.0 meV, RMSE_F=608.0 meV / A, RMSE_Mu_per_atom=20.24 mDebye
+2023-12-31 00:40:11.347 INFO: Epoch 840: loss=36.8560, RMSE_E_per_atom=5.9 meV, RMSE_F=606.5 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:40:12.282 INFO: Epoch 842: loss=36.8341, RMSE_E_per_atom=6.1 meV, RMSE_F=606.3 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:40:13.220 INFO: Epoch 844: loss=36.8011, RMSE_E_per_atom=5.6 meV, RMSE_F=606.0 meV / A, RMSE_Mu_per_atom=20.39 mDebye
+2023-12-31 00:40:14.155 INFO: Epoch 846: loss=36.9317, RMSE_E_per_atom=6.8 meV, RMSE_F=607.0 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:40:15.092 INFO: Epoch 848: loss=36.8875, RMSE_E_per_atom=8.7 meV, RMSE_F=606.4 meV / A, RMSE_Mu_per_atom=20.34 mDebye
+2023-12-31 00:40:16.027 INFO: Epoch 850: loss=37.1387, RMSE_E_per_atom=5.9 meV, RMSE_F=608.8 meV / A, RMSE_Mu_per_atom=20.39 mDebye
+2023-12-31 00:40:16.964 INFO: Epoch 852: loss=37.1562, RMSE_E_per_atom=11.1 meV, RMSE_F=608.2 meV / A, RMSE_Mu_per_atom=20.36 mDebye
+2023-12-31 00:40:17.898 INFO: Epoch 854: loss=37.1175, RMSE_E_per_atom=6.3 meV, RMSE_F=608.6 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:40:18.833 INFO: Epoch 856: loss=37.0505, RMSE_E_per_atom=9.8 meV, RMSE_F=607.6 meV / A, RMSE_Mu_per_atom=20.31 mDebye
+2023-12-31 00:40:19.768 INFO: Epoch 858: loss=37.0272, RMSE_E_per_atom=6.9 meV, RMSE_F=607.8 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:40:20.709 INFO: Epoch 860: loss=37.1580, RMSE_E_per_atom=8.6 meV, RMSE_F=608.6 meV / A, RMSE_Mu_per_atom=20.30 mDebye
+2023-12-31 00:40:21.646 INFO: Epoch 862: loss=37.1192, RMSE_E_per_atom=6.1 meV, RMSE_F=608.6 meV / A, RMSE_Mu_per_atom=20.30 mDebye
+2023-12-31 00:40:22.583 INFO: Epoch 864: loss=37.4440, RMSE_E_per_atom=7.0 meV, RMSE_F=611.2 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:40:23.521 INFO: Epoch 866: loss=37.0401, RMSE_E_per_atom=6.0 meV, RMSE_F=608.0 meV / A, RMSE_Mu_per_atom=20.27 mDebye
+2023-12-31 00:40:24.456 INFO: Epoch 868: loss=37.4203, RMSE_E_per_atom=8.1 meV, RMSE_F=610.8 meV / A, RMSE_Mu_per_atom=20.28 mDebye
+2023-12-31 00:40:25.393 INFO: Epoch 870: loss=36.9872, RMSE_E_per_atom=5.6 meV, RMSE_F=607.6 meV / A, RMSE_Mu_per_atom=20.29 mDebye
+2023-12-31 00:40:26.329 INFO: Epoch 872: loss=37.2999, RMSE_E_per_atom=10.3 meV, RMSE_F=609.5 meV / A, RMSE_Mu_per_atom=20.28 mDebye
+2023-12-31 00:40:27.264 INFO: Epoch 874: loss=36.9900, RMSE_E_per_atom=5.8 meV, RMSE_F=607.6 meV / A, RMSE_Mu_per_atom=20.32 mDebye
+2023-12-31 00:40:28.200 INFO: Epoch 876: loss=37.3715, RMSE_E_per_atom=12.8 meV, RMSE_F=609.6 meV / A, RMSE_Mu_per_atom=20.31 mDebye
+2023-12-31 00:40:29.137 INFO: Epoch 878: loss=37.2517, RMSE_E_per_atom=5.9 meV, RMSE_F=609.7 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:40:30.074 INFO: Epoch 880: loss=37.1615, RMSE_E_per_atom=7.6 meV, RMSE_F=608.8 meV / A, RMSE_Mu_per_atom=20.26 mDebye
+2023-12-31 00:40:31.012 INFO: Epoch 882: loss=37.5017, RMSE_E_per_atom=9.9 meV, RMSE_F=611.2 meV / A, RMSE_Mu_per_atom=20.33 mDebye
+2023-12-31 00:40:31.947 INFO: Epoch 884: loss=37.2213, RMSE_E_per_atom=5.7 meV, RMSE_F=609.5 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:40:32.880 INFO: Epoch 886: loss=37.4308, RMSE_E_per_atom=6.9 meV, RMSE_F=611.1 meV / A, RMSE_Mu_per_atom=20.41 mDebye
+2023-12-31 00:40:33.815 INFO: Epoch 888: loss=37.3127, RMSE_E_per_atom=13.0 meV, RMSE_F=609.1 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:40:34.751 INFO: Epoch 890: loss=37.3591, RMSE_E_per_atom=7.1 meV, RMSE_F=610.5 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:40:35.690 INFO: Epoch 892: loss=37.4886, RMSE_E_per_atom=9.1 meV, RMSE_F=611.3 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:40:36.626 INFO: Epoch 894: loss=37.2781, RMSE_E_per_atom=7.2 meV, RMSE_F=609.8 meV / A, RMSE_Mu_per_atom=20.47 mDebye
+2023-12-31 00:40:37.560 INFO: Epoch 896: loss=37.2344, RMSE_E_per_atom=6.1 meV, RMSE_F=609.5 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:40:38.497 INFO: Epoch 898: loss=37.4807, RMSE_E_per_atom=8.3 meV, RMSE_F=611.3 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:40:39.433 INFO: Epoch 900: loss=37.4919, RMSE_E_per_atom=8.1 meV, RMSE_F=611.4 meV / A, RMSE_Mu_per_atom=20.50 mDebye
+2023-12-31 00:40:40.368 INFO: Epoch 902: loss=37.5551, RMSE_E_per_atom=8.8 meV, RMSE_F=611.9 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:40:41.306 INFO: Epoch 904: loss=37.4580, RMSE_E_per_atom=14.0 meV, RMSE_F=610.1 meV / A, RMSE_Mu_per_atom=20.40 mDebye
+2023-12-31 00:40:42.243 INFO: Epoch 906: loss=37.3396, RMSE_E_per_atom=6.1 meV, RMSE_F=610.4 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:40:43.176 INFO: Epoch 908: loss=37.6477, RMSE_E_per_atom=13.0 meV, RMSE_F=611.9 meV / A, RMSE_Mu_per_atom=20.48 mDebye
+2023-12-31 00:40:44.108 INFO: Epoch 910: loss=37.5493, RMSE_E_per_atom=8.1 meV, RMSE_F=611.9 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:40:45.044 INFO: Epoch 912: loss=37.5203, RMSE_E_per_atom=10.1 meV, RMSE_F=611.4 meV / A, RMSE_Mu_per_atom=20.47 mDebye
+2023-12-31 00:40:45.979 INFO: Epoch 914: loss=37.6626, RMSE_E_per_atom=8.9 meV, RMSE_F=612.7 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:40:46.915 INFO: Epoch 916: loss=37.4173, RMSE_E_per_atom=7.2 meV, RMSE_F=610.9 meV / A, RMSE_Mu_per_atom=20.50 mDebye
+2023-12-31 00:40:47.845 INFO: Epoch 918: loss=37.4654, RMSE_E_per_atom=6.9 meV, RMSE_F=611.4 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:40:48.781 INFO: Epoch 920: loss=37.5307, RMSE_E_per_atom=5.8 meV, RMSE_F=612.0 meV / A, RMSE_Mu_per_atom=20.50 mDebye
+2023-12-31 00:40:49.712 INFO: Epoch 922: loss=37.6301, RMSE_E_per_atom=9.4 meV, RMSE_F=612.4 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:40:50.648 INFO: Epoch 924: loss=37.4947, RMSE_E_per_atom=6.2 meV, RMSE_F=611.7 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:40:51.585 INFO: Epoch 926: loss=37.4274, RMSE_E_per_atom=10.5 meV, RMSE_F=610.5 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:40:52.518 INFO: Epoch 928: loss=37.6125, RMSE_E_per_atom=6.7 meV, RMSE_F=612.6 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:40:53.454 INFO: Epoch 930: loss=37.4805, RMSE_E_per_atom=9.4 meV, RMSE_F=611.2 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:40:54.387 INFO: Epoch 932: loss=37.4657, RMSE_E_per_atom=6.4 meV, RMSE_F=611.4 meV / A, RMSE_Mu_per_atom=20.38 mDebye
+2023-12-31 00:40:55.322 INFO: Epoch 934: loss=37.7674, RMSE_E_per_atom=9.5 meV, RMSE_F=613.5 meV / A, RMSE_Mu_per_atom=20.37 mDebye
+2023-12-31 00:40:56.258 INFO: Epoch 936: loss=37.6436, RMSE_E_per_atom=9.0 meV, RMSE_F=612.5 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:40:57.192 INFO: Epoch 938: loss=37.7380, RMSE_E_per_atom=8.2 meV, RMSE_F=613.4 meV / A, RMSE_Mu_per_atom=20.48 mDebye
+2023-12-31 00:40:58.129 INFO: Epoch 940: loss=37.3607, RMSE_E_per_atom=7.4 meV, RMSE_F=610.4 meV / A, RMSE_Mu_per_atom=20.51 mDebye
+2023-12-31 00:40:59.062 INFO: Epoch 942: loss=37.9293, RMSE_E_per_atom=9.4 meV, RMSE_F=614.8 meV / A, RMSE_Mu_per_atom=20.57 mDebye
+2023-12-31 00:40:59.997 INFO: Epoch 944: loss=37.5245, RMSE_E_per_atom=6.4 meV, RMSE_F=611.9 meV / A, RMSE_Mu_per_atom=20.54 mDebye
+2023-12-31 00:41:00.932 INFO: Epoch 946: loss=37.7988, RMSE_E_per_atom=11.8 meV, RMSE_F=613.3 meV / A, RMSE_Mu_per_atom=20.47 mDebye
+2023-12-31 00:41:01.864 INFO: Epoch 948: loss=37.6921, RMSE_E_per_atom=8.0 meV, RMSE_F=613.1 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:41:02.802 INFO: Epoch 950: loss=37.6772, RMSE_E_per_atom=6.4 meV, RMSE_F=613.1 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:41:03.737 INFO: Epoch 952: loss=37.7641, RMSE_E_per_atom=6.9 meV, RMSE_F=613.8 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:41:04.673 INFO: Epoch 954: loss=37.6422, RMSE_E_per_atom=6.8 meV, RMSE_F=612.8 meV / A, RMSE_Mu_per_atom=20.54 mDebye
+2023-12-31 00:41:05.607 INFO: Epoch 956: loss=37.8626, RMSE_E_per_atom=14.3 meV, RMSE_F=613.3 meV / A, RMSE_Mu_per_atom=20.59 mDebye
+2023-12-31 00:41:06.541 INFO: Epoch 958: loss=37.7173, RMSE_E_per_atom=8.0 meV, RMSE_F=613.3 meV / A, RMSE_Mu_per_atom=20.53 mDebye
+2023-12-31 00:41:07.477 INFO: Epoch 960: loss=37.5626, RMSE_E_per_atom=8.0 meV, RMSE_F=612.0 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:41:08.413 INFO: Epoch 962: loss=37.6259, RMSE_E_per_atom=7.3 meV, RMSE_F=612.6 meV / A, RMSE_Mu_per_atom=20.55 mDebye
+2023-12-31 00:41:09.345 INFO: Epoch 964: loss=37.8163, RMSE_E_per_atom=6.3 meV, RMSE_F=614.3 meV / A, RMSE_Mu_per_atom=20.59 mDebye
+2023-12-31 00:41:10.280 INFO: Epoch 966: loss=38.0324, RMSE_E_per_atom=7.6 meV, RMSE_F=615.9 meV / A, RMSE_Mu_per_atom=20.54 mDebye
+2023-12-31 00:41:11.216 INFO: Epoch 968: loss=37.7183, RMSE_E_per_atom=10.7 meV, RMSE_F=612.9 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:41:12.151 INFO: Epoch 970: loss=37.8278, RMSE_E_per_atom=7.5 meV, RMSE_F=614.2 meV / A, RMSE_Mu_per_atom=20.53 mDebye
+2023-12-31 00:41:13.083 INFO: Epoch 972: loss=37.6610, RMSE_E_per_atom=10.2 meV, RMSE_F=612.5 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:41:14.015 INFO: Epoch 974: loss=37.6461, RMSE_E_per_atom=6.3 meV, RMSE_F=612.9 meV / A, RMSE_Mu_per_atom=20.49 mDebye
+2023-12-31 00:41:14.950 INFO: Epoch 976: loss=37.8557, RMSE_E_per_atom=6.9 meV, RMSE_F=614.5 meV / A, RMSE_Mu_per_atom=20.50 mDebye
+2023-12-31 00:41:15.883 INFO: Epoch 978: loss=37.7490, RMSE_E_per_atom=6.6 meV, RMSE_F=613.7 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:41:16.821 INFO: Epoch 980: loss=37.7454, RMSE_E_per_atom=7.1 meV, RMSE_F=613.6 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:41:17.759 INFO: Epoch 982: loss=38.0096, RMSE_E_per_atom=6.1 meV, RMSE_F=615.9 meV / A, RMSE_Mu_per_atom=20.46 mDebye
+2023-12-31 00:41:18.698 INFO: Epoch 984: loss=37.9179, RMSE_E_per_atom=11.4 meV, RMSE_F=614.4 meV / A, RMSE_Mu_per_atom=20.47 mDebye
+2023-12-31 00:41:19.637 INFO: Epoch 986: loss=37.9224, RMSE_E_per_atom=8.5 meV, RMSE_F=614.9 meV / A, RMSE_Mu_per_atom=20.47 mDebye
+2023-12-31 00:41:20.577 INFO: Epoch 988: loss=37.8113, RMSE_E_per_atom=7.0 meV, RMSE_F=614.2 meV / A, RMSE_Mu_per_atom=20.44 mDebye
+2023-12-31 00:41:21.515 INFO: Epoch 990: loss=38.0471, RMSE_E_per_atom=7.4 meV, RMSE_F=616.0 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:41:22.452 INFO: Epoch 992: loss=38.3550, RMSE_E_per_atom=11.6 meV, RMSE_F=617.9 meV / A, RMSE_Mu_per_atom=20.45 mDebye
+2023-12-31 00:41:23.385 INFO: Epoch 994: loss=37.7231, RMSE_E_per_atom=6.0 meV, RMSE_F=613.6 meV / A, RMSE_Mu_per_atom=20.47 mDebye
+2023-12-31 00:41:24.321 INFO: Epoch 996: loss=38.0623, RMSE_E_per_atom=6.0 meV, RMSE_F=616.3 meV / A, RMSE_Mu_per_atom=20.43 mDebye
+2023-12-31 00:41:25.258 INFO: Epoch 998: loss=38.1428, RMSE_E_per_atom=11.5 meV, RMSE_F=616.2 meV / A, RMSE_Mu_per_atom=20.41 mDebye
+2023-12-31 00:41:25.716 INFO: Training complete
+2023-12-31 00:41:25.717 INFO: Computing metrics for training, validation, and test sets
+2023-12-31 00:41:25.719 INFO: Loading checkpoint: checkpoints/ox_es1_rattled_50x6e_run-5678_epoch-216.pt
+2023-12-31 00:41:25.748 INFO: Loaded model from epoch 216
+2023-12-31 00:41:25.804 INFO: Evaluating train ...
+2023-12-31 00:41:25.998 INFO: Evaluating valid ...
+2023-12-31 00:41:26.077 INFO: Evaluating Default ...
+2023-12-31 00:41:26.291 INFO: 
++-------------+---------------------+------------------+--------------+-------------------------+---------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | rel F RMSE % | RMSE MU / mDebye / atom | rel MU RMSE % |
++-------------+---------------------+------------------+--------------+-------------------------+---------------+
+|    train    |        216.8        |      203.1       |     7.8      |           15.4          |      41.8     |
+|    valid    |        218.0        |      472.0       |     18.8     |           20.5          |      54.9     |
+|   Default   |        216.8        |      224.3       |     8.7      |           15.7          |      42.6     |
++-------------+---------------------+------------------+--------------+-------------------------+---------------+
+2023-12-31 00:41:26.292 INFO: Saving model to checkpoints/ox_es1_rattled_50x6e_run-5678.model
+2023-12-31 00:41:26.793 INFO: Loading checkpoint: checkpoints/ox_es1_rattled_50x6e_run-5678_epoch-806_swa.pt
+2023-12-31 00:41:26.821 INFO: Loaded model from epoch 806
+2023-12-31 00:41:26.876 INFO: Evaluating train ...
+2023-12-31 00:41:27.070 INFO: Evaluating valid ...
+2023-12-31 00:41:27.149 INFO: Evaluating Default ...
+2023-12-31 00:41:27.357 INFO: 
++-------------+---------------------+------------------+--------------+-------------------------+---------------+
+| config_type | RMSE E / meV / atom | RMSE F / meV / A | rel F RMSE % | RMSE MU / mDebye / atom | rel MU RMSE % |
++-------------+---------------------+------------------+--------------+-------------------------+---------------+
+|    train    |         11.7        |       28.2       |     1.1      |           12.9          |      34.9     |
+|    valid    |         12.7        |      602.5       |     24.0     |           20.4          |      54.7     |
+|   Default   |         11.8        |      137.5       |     5.3      |           13.3          |      36.1     |
++-------------+---------------------+------------------+--------------+-------------------------+---------------+
+2023-12-31 00:41:27.357 INFO: Saving model to checkpoints/ox_es1_rattled_50x6e_run-5678_swa.model
+2023-12-31 00:41:27.855 INFO: Done

@@ -9,7 +9,7 @@ mwrap = MACEWrapper()
 
 atoms = read("gs_PBE0/xyz/ox.xyz")
 rand_seed = {'a': 1234,'b': 2345, 'c': 3456, 'd': 4567, 'e': 5678}
-suffix = {'rattled_50x1'+rs:rand_seed[rs] for rs in rand_seed}
+suffix = {'rattled_50x6'+rs:rand_seed[rs] for rs in rand_seed}
 calc_params_mace = {'target': [0,1],'calc_prefix': "",
                     'calc_suffix': suffix,'calc_seed': "ox", 
                     'calc_dir_suffix': 'rattled'}
@@ -33,12 +33,12 @@ def array_split(energies):
 
 my_lists = {}
 
-for i in range(60, 142, 2):
+for i in range(60, 122, 2):
     #print(i)
     list_name = f"angle_{i}"
     my_lists[list_name + '_gs'] = []
     my_lists[list_name + '_es1'] = []
-    atoms.set_angle(1, 0, 2, angle=i)
+    atoms.set_angle(2, 1, 0, angle=i)
     energies, forces, dipoles, calc = mwrap.singlepoint(atoms, 'ox', calc_params=calc_params_mace, forces=True,
                                                         dipole=True)
 
